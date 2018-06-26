@@ -6,7 +6,22 @@ export default class App extends Component {
 
         this.state = {
             username: '',
-            message: ''
+            message: '',
+            chatMessages: [
+                {
+                    username: 'user1',
+                    message: 'msg'
+                }, {
+                    username: 'user1',
+                    message: 'msg'
+                }, {
+                    username: 'user2',
+                    message: 'msg'
+                }, {
+                    username: 'user1',
+                    message: 'msg'
+                },
+            ]
         }
     }
 
@@ -17,6 +32,17 @@ export default class App extends Component {
         });
     }
 
+    handleSendMessage = e => {
+        e.preventDefault();
+        this.setState({
+            chatMessages: this.state.chatMessages.concat({
+                username: this.state.username,
+                message: this.state.message
+            }),
+            message: ''
+        });
+    }
+
     render() {
         return (
             <div>
@@ -24,26 +50,12 @@ export default class App extends Component {
                 <section name="chat-box">
                     <table>
                         <tbody>
-                            <tr>
-                                <td>user1</td>
-                                <td>msg</td>
-                            </tr>
-                            <tr>
-                                <td>user1</td>
-                                <td>msg</td>
-                            </tr>
-                            <tr>
-                                <td>user2</td>
-                                <td>msg</td>
-                            </tr>
-                            <tr>
-                                <td>user1</td>
-                                <td>msg</td>
-                            </tr>
-                            <tr>
-                                <td>user2</td>
-                                <td>msg</td>
-                            </tr>
+                            {this.state.chatMessages.map((msg, idx) => (
+                                <tr key={idx}>
+                                    <td>{msg.username}</td>
+                                    <td>{msg.message}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                     <input
@@ -59,7 +71,11 @@ export default class App extends Component {
                         value={this.state.message}
                         onChange={this.handleImputChange}
                         placeholder="Type your message..." />
-                    <input type="button" value="Send" />
+                    <input
+                        type="button"
+                        value="Send"
+                        onClick={this.handleSendMessage}
+                    />
                 </section>
             </div>
         )
