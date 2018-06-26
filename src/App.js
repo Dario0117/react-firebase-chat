@@ -1,6 +1,22 @@
 import React, { Component } from 'react'
 
 export default class App extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            username: '',
+            message: ''
+        }
+    }
+
+    handleImputChange = e => {
+        let { id, value } = e.target;
+        this.setState({
+            [id]: value
+        });
+    }
+
     render() {
         return (
             <div>
@@ -30,8 +46,19 @@ export default class App extends Component {
                             </tr>
                         </tbody>
                     </table>
-                    <input type="text" id="username" placeholder="Type your username"/>
-                    <input type="text" id="message" placeholder="Type your message..." />
+                    <input
+                        type="text"
+                        id="username"
+                        value={this.state.username}
+                        onChange={this.handleImputChange}
+                        placeholder="Type your username"
+                    />
+                    <input
+                        type="text"
+                        id="message"
+                        value={this.state.message}
+                        onChange={this.handleImputChange}
+                        placeholder="Type your message..." />
                     <input type="button" value="Send" />
                 </section>
             </div>
