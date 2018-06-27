@@ -1,0 +1,70 @@
+import React, { Component } from 'react'
+import firebase from 'firebase/app'
+import 'firebase/database'
+import firebaseConfig from '../firebase-config'
+import uniqid from 'uniqid'
+import Connect from './Connect'
+import ChatBox from './ChatBox'
+
+export default class App extends Component {
+    constructor(props) {
+        super(props);
+
+        this.database = null;
+        this.msgDB = 'messages/';
+
+        this.state = {
+            chatMessages: [],
+            roomName: '',
+            username: '',
+        }
+    }
+
+    parseSnap = (snap) => {
+        let snapRaw = snap.val();
+        let snapKeys = Object.keys(snapRaw);
+        return snapKeys.map(k => Object.assign({ id: k }, snapRaw[k]));
+    }
+
+    handleConnect = connectionData => {
+        this.database
+            .ref(`${this.msgDB}/${connectionData.roomName}`)
+            .on('value', snap => {
+                this.setState({
+                    chatMessages: this.parseSnap(snap),
+                    roomName: connectionData.roomName,
+                    username: connectionData.username,
+                })
+            })
+    }
+
+    handleSendMessage = message => {
+        let id = uniqid();
+        let msg = {
+            username: this.state.username,
+            message,
+        }
+
+        this.database
+            .ref(`${this.msgDB}/${this.state.roomName}/${id}`)
+            .set(msg)
+    }
+
+    componentDidMount = () => {
+        firebase.initializeApp(firebaseConfig);
+        this.database = firebase.database();
+    }
+
+    render() {
+        return (
+            <div>
+                <h1>React firebase chat</h1>
+                <Connect handleConnect={this.handleConnect} />
+                <ChatBox
+                    handleSendMessage={this.handleSendMessage}
+                    messageList={this.state.chatMessages}
+                />
+            </div>
+        )
+    }
+}
