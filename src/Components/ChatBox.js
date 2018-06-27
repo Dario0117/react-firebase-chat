@@ -19,10 +19,12 @@ export default class ChatBox extends Component {
 
     handleSendMessage = e => {
         e.preventDefault();
-        this.props.handleSendMessage(this.state.message);
-        this.setState({
-            message: ''
-        })
+        if(this.state.message) {
+            this.props.handleSendMessage(this.state.message);
+            this.setState({
+                message: ''
+            })
+        }
     }
 
     render() {
