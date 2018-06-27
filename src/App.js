@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/database'
 import firebaseConfig from './firebase-config'
 import uniqid from 'uniqid'
 
@@ -43,7 +44,7 @@ export default class App extends Component {
         });
     }
 
-    handleConnect = async e => {
+    handleConnect = e => {
         e.preventDefault();
         this.disabled = true;
         this.database
