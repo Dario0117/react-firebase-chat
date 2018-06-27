@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ChatMessage from './ChatMessage'
 
 export default class ChatMessageList extends Component {
     render() {
@@ -6,10 +7,7 @@ export default class ChatMessageList extends Component {
             <table>
                 <tbody>
                     {this.props.messageList.map(msg => (
-                        <tr key={msg.id}>
-                            <td>{msg.username}</td>
-                            <td>{msg.message}</td>
-                        </tr>
+                        <ChatMessage key={msg.id} msg={msg} />
                     ))}
                 </tbody>
             </table>
