@@ -26,6 +26,14 @@ export default class Connect extends Component {
         this.props.handleConnect(Object.assign({}, this.state))
     }
 
+    handleDisconnectClick = e => {
+        e.preventDefault();
+        this.setState({
+            disabled: false
+        })
+        this.props.handleDisconnect()
+    }
+
     render() {
         return (
             <div>
@@ -50,6 +58,11 @@ export default class Connect extends Component {
                     value="Connect"
                     onClick={this.handleConnectClick}
                     disabled={this.state.disabled ? 'disabled' : ''}
+                />
+                <input
+                    type="button"
+                    value="Disconnect"
+                    onClick={this.handleDisconnectClick}
                 />
             </div>
         )

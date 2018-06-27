@@ -17,6 +17,7 @@ export default class App extends Component {
             chatMessages: [],
             roomName: '',
             username: '',
+            isConnected: false,
         }
     }
 
@@ -34,8 +35,18 @@ export default class App extends Component {
                     chatMessages: this.parseSnap(snap),
                     roomName: connectionData.roomName,
                     username: connectionData.username,
+                    isConnected: true,
                 })
             })
+    }
+
+    handleDisconnect = () => {
+        this.database
+            .ref(`${this.msgDB}/${this.state.roomName}`)
+            .off()
+        this.setState({
+            isConnected: false,
+        })
     }
 
     handleSendMessage = message => {
@@ -44,10 +55,11 @@ export default class App extends Component {
             username: this.state.username,
             message,
         }
-
-        this.database
-            .ref(`${this.msgDB}/${this.state.roomName}/${id}`)
-            .set(msg)
+        if(this.state.isConnected) {
+            this.database
+                .ref(`${this.msgDB}/${this.state.roomName}/${id}`)
+                .set(msg)
+        }
     }
 
     componentDidMount = () => {
@@ -56,10 +68,20 @@ export default class App extends Component {
     }
 
     render() {
+        let connectionStatus = ''
+        if (this.state.isConnected) {
+            connectionStatus = <h2>Your status is online</h2>
+        } else {
+            connectionStatus = <h2>Your status is offline</h2>
+        }
         return (
             <div>
                 <h1>React firebase chat</h1>
-                <Connect handleConnect={this.handleConnect} />
+                {connectionStatus}
+                <Connect
+                    handleConnect={this.handleConnect}
+                    handleDisconnect={this.handleDisconnect}
+                />
                 <ChatBox
                     handleSendMessage={this.handleSendMessage}
                     messageList={this.state.chatMessages}
