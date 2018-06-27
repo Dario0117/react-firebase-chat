@@ -1,6 +1,6 @@
 {
   "name": "react-firebase-chat",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "dependencies": {
     "firebase": "^5.1.0",

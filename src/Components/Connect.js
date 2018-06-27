@@ -10,7 +10,7 @@ export default class Connect extends Component {
             disabled: false,
         }
     }
-    
+
     handleImputChange = e => {
         let { id, value } = e.target;
         this.setState({
@@ -20,10 +20,12 @@ export default class Connect extends Component {
 
     handleConnectClick = e => {
         e.preventDefault();
-        this.setState({
-            disabled: true
-        })
-        this.props.handleConnect(Object.assign({}, this.state))
+        if (this.state.username && this.state.roomName) {
+            this.setState({
+                disabled: true
+            })
+            this.props.handleConnect(Object.assign({}, this.state))
+        }
     }
 
     handleDisconnectClick = e => {
