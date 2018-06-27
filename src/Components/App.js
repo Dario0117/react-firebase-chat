@@ -23,6 +23,9 @@ export default class App extends Component {
 
     parseSnap = (snap) => {
         let snapRaw = snap.val();
+        if(snapRaw === null) {
+            return []
+        }
         let snapKeys = Object.keys(snapRaw);
         return snapKeys.map(k => Object.assign({ id: k }, snapRaw[k]));
     }
