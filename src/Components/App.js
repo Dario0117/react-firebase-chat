@@ -11,7 +11,8 @@ export default class App extends Component {
         super(props);
 
         this.database = null;
-        this.msgDB = 'messages/';
+        this.CHATROOMS = 'chatrooms/';
+        this.MESSAGES = 'messages/';
 
         this.state = {
             chatMessages: [],
@@ -32,7 +33,7 @@ export default class App extends Component {
 
     handleConnect = connectionData => {
         this.database
-            .ref(`${this.msgDB}/${connectionData.roomName}`)
+            .ref(`${this.CHATROOMS}/${connectionData.roomName}/${this.MESSAGES}`)
             .on('value', snap => {
                 this.setState({
                     chatMessages: this.parseSnap(snap),
@@ -45,7 +46,7 @@ export default class App extends Component {
 
     handleDisconnect = () => {
         this.database
-            .ref(`${this.msgDB}/${this.state.roomName}`)
+            .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
             .off()
         this.setState({
             isConnected: false,
@@ -60,7 +61,7 @@ export default class App extends Component {
         }
         if(this.state.isConnected) {
             this.database
-                .ref(`${this.msgDB}/${this.state.roomName}/${id}`)
+                .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}/${id}`)
                 .set(msg)
         }
     }
