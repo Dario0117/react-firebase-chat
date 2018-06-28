@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/database'
 import firebaseConfig from '../firebase-config'
-import uniqid from 'uniqid'
 import Connect from './Connect'
 import ChatBox from './ChatBox'
 
@@ -24,7 +23,7 @@ export default class App extends Component {
 
     parseSnap = (snap) => {
         let snapRaw = snap.val();
-        if(snapRaw === null) {
+        if (snapRaw === null) {
             return []
         }
         let snapKeys = Object.keys(snapRaw);
@@ -54,15 +53,14 @@ export default class App extends Component {
     }
 
     handleSendMessage = message => {
-        let id = uniqid();
-        let msg = {
-            username: this.state.username,
-            message,
-        }
-        if(this.state.isConnected) {
+        if (this.state.isConnected) {
             this.database
-                .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}/${id}`)
-                .set(msg)
+                .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
+                .push()
+                .set({
+                    username: this.state.username,
+                    message,
+                })
         }
     }
 
