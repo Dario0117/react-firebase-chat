@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import UrlMeta from '../Utils/UrlMeta'
 
 export default class ExternalChatMessage extends Component {
 
@@ -13,13 +14,13 @@ export default class ExternalChatMessage extends Component {
         }
     }
 
-    componentDidMount = () => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', `https://cors-anywhere.herokuapp.com/${this.state.url}`, true);
-        xhr.addEventListener('load', e => {
-            console.log(e.target.response);
-        })
-        xhr.send();
+    componentDidMount = async () => {
+        let meta = await UrlMeta(this.state.url);
+        this.setState({
+            title: meta['og:title'],
+            description: meta['og:desceription'],
+            image: meta['og:image'],
+        });
     }
 
     render() {
@@ -29,7 +30,7 @@ export default class ExternalChatMessage extends Component {
                     <span>{this.state.title}</span><br />
                     <span>{this.state.description}</span><br />
                     <span>{this.state.url}</span><br />
-                    <img src={this.state.image} alt="Not found" />
+                    <img src={this.state.image} alt="Not found" height="80" />
                 </div>
             )
         } else {
