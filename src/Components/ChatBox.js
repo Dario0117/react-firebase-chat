@@ -19,7 +19,10 @@ export default class ChatBox extends Component {
 
     handleImputChange = e => {
         let { id, value } = e.target;
-        let url = UrlFromInput(value);
+        let url = '';
+        if (value[value.length - 1] === ' ') {
+            url = UrlFromInput(value);
+        }
         let newState = {
             [id]: value
         }
@@ -30,7 +33,7 @@ export default class ChatBox extends Component {
             this.showUrlCard = false;
         }
 
-        if(!value) {
+        if (!value) {
             newState.cardType = '';
             newState.cardSrc = '';
             this.showUrlCard = true;
