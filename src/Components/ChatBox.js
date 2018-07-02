@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import ChatMessageList from './ChatMessageList'
 import { imageASBase64 } from '../Utils/ImgFromClipboard'
+import UrlFromInput from '../Utils/UrlFromInput'
+import ExternalChatMessage from './ExternalChatMessage'
 
 export default class ChatBox extends Component {
     constructor(props) {
@@ -11,13 +13,30 @@ export default class ChatBox extends Component {
             cardType: '',
             cardSrc: '',
         }
+
+        this.showUrlCard = true;
     }
 
     handleImputChange = e => {
         let { id, value } = e.target;
-        this.setState({
+        let url = UrlFromInput(value);
+        let newState = {
             [id]: value
-        });
+        }
+
+        if (url && this.showUrlCard) {
+            newState.cardType = 'url';
+            newState.cardSrc = url;
+            this.showUrlCard = false;
+        }
+
+        if(!value) {
+            newState.cardType = '';
+            newState.cardSrc = '';
+            this.showUrlCard = true;
+        }
+
+        this.setState(newState);
     }
 
     handleSendMessage = e => {
@@ -48,6 +67,9 @@ export default class ChatBox extends Component {
                 card = <img src={this.state.cardSrc} alt="" />
                 break;
 
+            case 'url':
+                card = <ExternalChatMessage url={this.state.cardSrc} />
+                break;
             default:
                 break;
         }
@@ -66,7 +88,7 @@ export default class ChatBox extends Component {
                     value="Send"
                     onClick={this.handleSendMessage}
                 />
-                <br/>
+                <br />
                 {card}
             </section>
         )

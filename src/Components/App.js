@@ -61,6 +61,11 @@ export default class App extends Component {
             if (input.cardType === 'img') {
                 msg.image = input.cardSrc;
             }
+            if (input.cardType === 'url') {
+                msg.external = {
+                    url: input.cardSrc
+                };
+            }
             this.database
                 .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
                 .push()
@@ -74,9 +79,16 @@ export default class App extends Component {
     }
 
     render() {
-        let connectionStatus = ''
+        let connectionStatus = '';
+        let chatbox = '';
         if (this.state.isConnected) {
             connectionStatus = <h2>Your status is online</h2>
+            chatbox = (
+                <ChatBox
+                    handleSendMessage={this.handleSendMessage}
+                    messageList={this.state.chatMessages}
+                />
+            );
         } else {
             connectionStatus = <h2>Your status is offline</h2>
         }
@@ -88,10 +100,7 @@ export default class App extends Component {
                     handleConnect={this.handleConnect}
                     handleDisconnect={this.handleDisconnect}
                 />
-                <ChatBox
-                    handleSendMessage={this.handleSendMessage}
-                    messageList={this.state.chatMessages}
-                />
+                {chatbox}
             </div>
         )
     }

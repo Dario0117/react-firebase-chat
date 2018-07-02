@@ -9,6 +9,7 @@ export default class ChatMessage extends Component {
             external = <ExternalChatMessage url={this.props.msg.external.url} />
         }
         if (this.props.msg.image) {
+            // TODO: Make this a component
             image = <img src={this.props.msg.image} alt="" />
         }
         return (
