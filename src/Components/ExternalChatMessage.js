@@ -4,7 +4,7 @@ import UrlMeta from '../Utils/UrlMeta'
 export default class ExternalChatMessage extends Component {
 
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             title: '',
@@ -15,11 +15,15 @@ export default class ExternalChatMessage extends Component {
     }
 
     componentDidMount = async () => {
-        let meta = await UrlMeta(this.state.url);
+        let {
+            title,
+            description,
+            image
+        } = await UrlMeta(this.state.url);
         this.setState({
-            title: meta['og:title'],
-            description: meta['og:desceription'],
-            image: meta['og:image'],
+            title,
+            description,
+            image,
         });
     }
 
