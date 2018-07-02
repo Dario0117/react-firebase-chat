@@ -52,15 +52,19 @@ export default class App extends Component {
         })
     }
 
-    handleSendMessage = message => {
+    handleSendMessage = input => {
         if (this.state.isConnected) {
+            let msg = {
+                username: this.state.username,
+                message: input.message,
+            }
+            if (input.cardType === 'img') {
+                msg.image = input.cardSrc;
+            }
             this.database
                 .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
                 .push()
-                .set({
-                    username: this.state.username,
-                    message,
-                })
+                .set(msg)
         }
     }
 

@@ -9,7 +9,7 @@ export default class ChatBox extends Component {
         this.state = {
             message: '',
             cardType: '',
-            cardSrc: ''
+            cardSrc: '',
         }
     }
 
@@ -22,19 +22,21 @@ export default class ChatBox extends Component {
 
     handleSendMessage = e => {
         e.preventDefault();
-        if (this.state.message) {
-            this.props.handleSendMessage(this.state.message);
+        if (this.state.message || this.state.cardType) {
+            this.props.handleSendMessage(this.state);
             this.setState({
-                message: ''
+                message: '',
+                cardType: '',
+                cardSrc: '',
             })
         }
     }
 
     handdleInputPaste = e => {
-        imageASBase64(e, (res) => {
+        imageASBase64(e, image => {
             this.setState({
                 cardType: 'img',
-                cardSrc: res,
+                cardSrc: image,
             })
         })
     }

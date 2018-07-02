@@ -8,5 +8,5 @@ Funcionalidades:
 - [ ] Comunicación entre 2 usuarios conectados
 - [ ] Listar usuarios conectados
 - [x] Enviar enlaces y mostrar un card
-- [ ] Enviar imágenes
+- [x] Enviar imágenes
 - [ ] Enviar videos
