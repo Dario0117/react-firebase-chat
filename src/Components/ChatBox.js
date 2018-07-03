@@ -20,6 +20,16 @@ export default class ChatBox extends Component {
     handleImputChange = e => {
         let { id, value } = e.target;
         let url = '';
+        /**
+         * When user type url, it only accept one character,
+         * ex: www.g instead of www.google.com,
+         * to fix it, i check if the last character of
+         * the imput is a space, but, another "problem"
+         * appears, the space is strictly neccessary
+         * to process url on the imput :c,
+         * when the user paste an url, can not be recognized,
+         * to fix it, i handle it on handleInputPaste function.
+         */
         if (value[value.length - 1] === ' ') {
             url = UrlFromInput(value);
         }
@@ -54,13 +64,25 @@ export default class ChatBox extends Component {
         }
     }
 
-    handdleInputPaste = e => {
-        imageASBase64(e, image => {
-            this.setState({
-                cardType: 'img',
-                cardSrc: image,
+    handleInputPaste = e => {
+        let value = e.clipboardData.getData('Text');
+        if (e.clipboardData.items[0].type === 'text/plain') {
+            let url = UrlFromInput(value);
+            if (url && this.showUrlCard) {
+                this.setState({
+                    cardType: 'url',
+                    cardSrc: url,
+                })
+                this.showUrlCard = false;
+            }
+        } else {
+            imageASBase64(e, image => {
+                this.setState({
+                    cardType: 'img',
+                    cardSrc: image,
+                })
             })
-        })
+        }
     }
 
     render() {
@@ -84,7 +106,7 @@ export default class ChatBox extends Component {
                     id="message"
                     value={this.state.message}
                     onChange={this.handleImputChange}
-                    onPaste={this.handdleInputPaste}
+                    onPaste={this.handleInputPaste}
                     placeholder="Type your message..." />
                 <input
                     type="button"
