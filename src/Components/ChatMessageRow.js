@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
-import ExternalChatMessage from './ExternalChatMessage'
+import UrlCard from './Cards/UrlCard'
+import ImgCard from './Cards/ImgCard'
 
 export default class ChatMessage extends Component {
     render() {
         let external = '';
         let image = '';
         if (this.props.msg.external) {
-            external = <ExternalChatMessage url={this.props.msg.external.url} />
+            external = <UrlCard url={this.props.msg.external.url} />
         }
         if (this.props.msg.image) {
-            // TODO: Make this a component
-            image = <img src={this.props.msg.image} alt="" />
+            image = <ImgCard src={this.props.msg.image} />
         }
         return (
             <div>

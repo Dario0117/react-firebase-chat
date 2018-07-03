@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import UrlMeta from '../Utils/UrlMeta'
+import UrlMeta from '../../Utils/UrlMeta'
 
 export default class ExternalChatMessage extends Component {
 

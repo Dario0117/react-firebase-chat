@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import ChatMessageList from './ChatMessageList'
 import { imageASBase64 } from '../Utils/ImgFromClipboard'
 import UrlFromInput from '../Utils/UrlFromInput'
-import ExternalChatMessage from './ExternalChatMessage'
+import UrlCard from './Cards/UrlCard'
+import ImgCard from './Cards/ImgCard'
 
 export default class ChatBox extends Component {
     constructor(props) {
@@ -89,11 +90,11 @@ export default class ChatBox extends Component {
         let card = '';
         switch (this.state.cardType) {
             case 'img':
-                card = <img src={this.state.cardSrc} alt="" />
+                card = <ImgCard src={this.state.cardSrc} />
                 break;
 
             case 'url':
-                card = <ExternalChatMessage url={this.state.cardSrc} />
+                card = <UrlCard url={this.state.cardSrc} />
                 break;
             default:
                 break;
