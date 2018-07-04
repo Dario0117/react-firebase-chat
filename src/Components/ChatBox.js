@@ -4,6 +4,9 @@ import { imageASBase64 } from '../Utils/ImgFromClipboard'
 import UrlFromInput from '../Utils/UrlFromInput'
 import UrlCard from './Cards/UrlCard'
 import ImgCard from './Cards/ImgCard'
+import AttachmentImage from '../DataStructures/Attachments/Image'
+import AttachmentLink from '../DataStructures/Attachments/Link'
+import UrlMeta from '../Utils/UrlMeta'
 
 export default class ChatBox extends Component {
     constructor(props) {
@@ -11,8 +14,8 @@ export default class ChatBox extends Component {
 
         this.state = {
             message: '',
-            cardType: '',
-            cardSrc: '',
+            attachment: '',
+            attachmentType: '',
         }
 
         this.showUrlCard = true;
@@ -20,7 +23,6 @@ export default class ChatBox extends Component {
 
     handleImputChange = e => {
         let { id, value } = e.target;
-        let url = '';
         /**
          * When user type url, it only accept one character,
          * ex: www.g instead of www.google.com,
@@ -32,21 +34,15 @@ export default class ChatBox extends Component {
          * to fix it, i handle it on handleInputPaste function.
          */
         if (value[value.length - 1] === ' ') {
-            url = UrlFromInput(value);
+            this.addUrlAttachment(value);
         }
         let newState = {
             [id]: value
         }
 
-        if (url && this.showUrlCard) {
-            newState.cardType = 'url';
-            newState.cardSrc = url;
-            this.showUrlCard = false;
-        }
-
         if (!value) {
-            newState.cardType = '';
-            newState.cardSrc = '';
+            newState.attachment = '';
+            newState.attachmentType = '';
             this.showUrlCard = true;
         }
 
@@ -55,32 +51,57 @@ export default class ChatBox extends Component {
 
     handleSendMessage = e => {
         e.preventDefault();
-        if (this.state.message || this.state.cardType) {
+        if (this.state.message || this.state.attachmentType) {
             this.props.handleSendMessage(this.state);
             this.setState({
                 message: '',
-                cardType: '',
-                cardSrc: '',
+                attachment: '',
+                attachmentType: '',
             })
         }
+    }
+
+    addUrlAttachment = value => {
+        let url = UrlFromInput(value);
+        if (url && this.showUrlCard) {
+            this.getMetaFromURL(url)
+                .then(meta => {
+                    let link = new AttachmentLink();
+                    link.description = meta.description;
+                    link.image = meta.image;
+                    link.title = meta.title;
+                    link.url = meta.url;
+                    this.setState({
+                        attachment: link,
+                        attachmentType: 'link',
+                    })
+                    this.showUrlCard = false;
+                });
+        }
+    }
+
+    getMetaFromURL = async url => {
+        let { title, description, image } = await UrlMeta(url);
+        return {
+            title,
+            description,
+            image,
+            url
+        };
     }
 
     handleInputPaste = e => {
         let value = e.clipboardData.getData('Text');
         if (e.clipboardData.items[0].type === 'text/plain') {
-            let url = UrlFromInput(value);
-            if (url && this.showUrlCard) {
-                this.setState({
-                    cardType: 'url',
-                    cardSrc: url,
-                })
-                this.showUrlCard = false;
-            }
+            this.addUrlAttachment(value);
         } else {
             imageASBase64(e, image => {
+                let img = new AttachmentImage();
+                img.full = image;
+                img.thumbnail = image;
                 this.setState({
-                    cardType: 'img',
-                    cardSrc: image,
+                    attachment: img,
+                    attachmentType: 'img',
                 })
             })
         }
@@ -88,13 +109,13 @@ export default class ChatBox extends Component {
 
     render() {
         let card = '';
-        switch (this.state.cardType) {
+        switch (this.state.attachmentType) {
             case 'img':
-                card = <ImgCard src={this.state.cardSrc} />
+                card = <ImgCard img={this.state.attachment} />
                 break;
 
-            case 'url':
-                card = <UrlCard url={this.state.cardSrc} />
+            case 'link':
+                card = <UrlCard link={this.state.attachment} />
                 break;
             default:
                 break;

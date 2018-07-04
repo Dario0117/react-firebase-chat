@@ -4,6 +4,9 @@ import 'firebase/database'
 import firebaseConfig from '../firebase-config'
 import Connect from './Connect'
 import ChatBox from './ChatBox'
+import Message from '../DataStructures/Message'
+import AttachmentImage from '../DataStructures/Attachments/Image'
+import AttachmentLink from '../DataStructures/Attachments/Link'
 
 export default class App extends Component {
     constructor(props) {
@@ -21,13 +24,35 @@ export default class App extends Component {
         }
     }
 
-    parseSnap = (snap) => {
+    getMessagesFromSnap = snap => {
         let snapRaw = snap.val();
         if (snapRaw === null) {
             return []
         }
         let snapKeys = Object.keys(snapRaw);
-        return snapKeys.map(k => Object.assign({ id: k }, snapRaw[k]));
+        return snapKeys.map(k => {
+            let msg = new Message();
+            msg.id = k;
+            msg.message = snapRaw[k].message;
+            msg.username = snapRaw[k].username;
+            let attachments = snapRaw[k].attachments;
+            if (attachments) {
+                if (attachments.image) {
+                    let img = new AttachmentImage();
+                    img.full = attachments.image.full;
+                    img.thumbnail = attachments.image.thumbnail;
+                    msg.addImage(img);
+                } else if (attachments.link) {
+                    let link = new AttachmentLink();
+                    link.description = attachments.link.description;
+                    link.image = attachments.link.image;
+                    link.title = attachments.link.title;
+                    link.url = attachments.link.url;
+                    msg.addLink(link);
+                }
+            }
+            return msg;
+        });
     }
 
     handleConnect = connectionData => {
@@ -35,7 +60,7 @@ export default class App extends Component {
             .ref(`${this.CHATROOMS}/${connectionData.roomName}/${this.MESSAGES}`)
             .on('value', snap => {
                 this.setState({
-                    chatMessages: this.parseSnap(snap),
+                    chatMessages: this.getMessagesFromSnap(snap),
                     roomName: connectionData.roomName,
                     username: connectionData.username,
                     isConnected: true,
@@ -54,17 +79,15 @@ export default class App extends Component {
 
     handleSendMessage = input => {
         if (this.state.isConnected) {
-            let msg = {
-                username: this.state.username,
-                message: input.message,
+            let msg = new Message();
+            delete msg.id;
+            msg.username = this.state.username;
+            msg.message = input.message;
+            if (input.attachmentType === 'img') {
+                msg.addImage(input.attachment);
             }
-            if (input.cardType === 'img') {
-                msg.image = input.cardSrc;
-            }
-            if (input.cardType === 'url') {
-                msg.external = {
-                    url: input.cardSrc
-                };
+            if (input.attachmentType === 'link') {
+                msg.addLink(input.attachment);
             }
             this.database
                 .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)

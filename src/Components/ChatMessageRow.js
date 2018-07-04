@@ -5,11 +5,13 @@ import ImgCard from './Cards/ImgCard'
 export default class ChatMessage extends Component {
     render() {
         let card = '';
-        if (this.props.msg.external) {
-            card = <UrlCard url={this.props.msg.external.url} />
-        }
-        if (this.props.msg.image) {
-            card = <ImgCard src={this.props.msg.image} />
+        let msg = this.props.msg;
+        if (msg.attachments) {
+            if (msg.attachments.image) {
+                card = <ImgCard img={msg.attachments.image} />
+            } else if(msg.attachments.link) {
+                card = <UrlCard link={msg.attachments.link} />
+            }
         }
         return (
             <div>
