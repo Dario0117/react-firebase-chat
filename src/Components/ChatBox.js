@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ChatMessageList from './ChatMessageList'
+import MessageList from './MessageList'
 import { imageASBase64 } from '../Utils/ImgFromClipboard'
 import UrlFromInput from '../Utils/UrlFromInput'
 import UrlCard from './Cards/UrlCard'
@@ -122,7 +122,7 @@ export default class ChatBox extends Component {
         }
         return (
             <section name="chat-box">
-                <ChatMessageList messageList={this.props.messageList} />
+                <MessageList messageList={this.props.messageList} />
                 <input
                     type="text"
                     id="message"

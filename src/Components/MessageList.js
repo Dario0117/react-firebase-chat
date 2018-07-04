@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import ChatMessageRow from './ChatMessageRow'
+import MessageRow from './MessageRow'
 
 export default class ChatMessageList extends Component {
     render() {
         return (
             <div>
                 {this.props.messageList.map(msg => (
-                    <ChatMessageRow key={msg.id} msg={msg} />
+                    <MessageRow key={msg.id} msg={msg} />
                 ))}
             </div>
         )
