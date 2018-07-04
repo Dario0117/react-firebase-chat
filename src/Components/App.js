@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/database'
+import 'firebase/storage'
 import firebaseConfig from '../firebase-config'
 import Connect from './Connect'
 import ChatBox from './ChatBox'
@@ -15,6 +16,8 @@ export default class App extends Component {
         this.database = null;
         this.CHATROOMS = 'chatrooms/';
         this.MESSAGES = 'messages/';
+
+        this.storage = null;
 
         this.state = {
             chatMessages: [],
@@ -77,28 +80,53 @@ export default class App extends Component {
         })
     }
 
-    handleSendMessage = input => {
+    handleSendMessage = async input => {
         if (this.state.isConnected) {
+            let msgRef = this.database
+                .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
+                .push()
             let msg = new Message();
             delete msg.id;
             msg.username = this.state.username;
             msg.message = input.message;
             if (input.attachmentType === 'img') {
-                msg.addImage(input.attachment);
+                let url = await this.uploadContent({
+                    name: msgRef.key,
+                    content: input.attachment.full,
+                })
+                let img = new AttachmentImage();
+                img.full = url;
+                img.thumbnail = url;
+                msg.addImage(img);
             }
             if (input.attachmentType === 'link') {
                 msg.addLink(input.attachment);
             }
-            this.database
-                .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
-                .push()
-                .set(msg)
+            msgRef.set(msg)
         }
+    }
+
+    uploadContent = file => {
+        return new Promise((resolve, reject) => {
+            if (this.state.isConnected) {
+                let imgRef = this.storage
+                    .ref(`${this.CHATROOMS}/${this.state.roomName}`)
+                    .child(file.name)
+
+                imgRef.putString(file.content, 'data_url')
+                    .then(() => {
+                        imgRef.getDownloadURL()
+                            .then(resolve)
+                            .catch(reject)
+                    })
+            }
+        })
     }
 
     componentDidMount = () => {
         firebase.initializeApp(firebaseConfig);
         this.database = firebase.database();
+        this.storage = firebase.storage();
     }
 
     render() {
