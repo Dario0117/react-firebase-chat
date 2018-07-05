@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-export default class ExternalChatMessage extends Component {
+export default class ImgCard extends Component {
 
     render() {
         let image = this.props.img;

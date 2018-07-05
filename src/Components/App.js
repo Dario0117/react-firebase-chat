@@ -8,9 +8,11 @@ import ChatBox from './ChatBox'
 import Message from '../DataStructures/Message'
 import AttachmentImage from '../DataStructures/Attachments/Image'
 import AttachmentLink from '../DataStructures/Attachments/Link'
+import AttachmentVideo from '../DataStructures/Attachments/Video'
 import {
     ATTACHMENT_TYPE_IMAGE,
     ATTACHMENT_TYPE_LINK,
+    ATTACHMENT_TYPE_VIDEO,
 } from '../DataStructures/Constants'
 
 export default class App extends Component {
@@ -56,6 +58,11 @@ export default class App extends Component {
                     link.title = attachments.link.title;
                     link.url = attachments.link.url;
                     msg.addLink(link);
+                } else if (attachments.video) {
+                    let video = new AttachmentVideo();
+                    video.name = attachments.video.name;
+                    video.source = attachments.video.source;
+                    msg.addVideo(video);
                 }
             }
             return msg;
@@ -93,18 +100,38 @@ export default class App extends Component {
             delete msg.id;
             msg.username = this.state.username;
             msg.message = input.message;
-            if (input.attachmentType === ATTACHMENT_TYPE_IMAGE) {
-                let url = await this.uploadContent({
-                    name: msgRef.key,
-                    content: input.attachment.full,
-                })
-                let img = new AttachmentImage();
-                img.full = url;
-                img.thumbnail = url;
-                msg.addImage(img);
-            }
-            if (input.attachmentType === ATTACHMENT_TYPE_LINK) {
-                msg.addLink(input.attachment);
+            let url = '';
+            switch (input.attachmentType) {
+                case ATTACHMENT_TYPE_IMAGE:
+                    url = await this.uploadContent({
+                        name: msgRef.key,
+                        content: input.attachment.full,
+                        type: input.attachmentType,
+                    })
+                    let img = new AttachmentImage();
+                    img.full = url;
+                    img.thumbnail = url;
+                    msg.addImage(img);
+                    break;
+
+                case ATTACHMENT_TYPE_LINK:
+                    msg.addLink(input.attachment);
+                    break;
+
+                case ATTACHMENT_TYPE_VIDEO:
+                    url = await this.uploadContent({
+                        name: msgRef.key,
+                        content: input.attachment,
+                        type: input.attachmentType,
+                    })
+                    let vid = new AttachmentVideo();
+                    vid.name = input.attachment.name;
+                    vid.source = url;
+                    msg.addVideo(vid);
+                    break;
+
+                default:
+                    break;
             }
             msgRef.set(msg)
         }
@@ -113,16 +140,29 @@ export default class App extends Component {
     uploadContent = file => {
         return new Promise((resolve, reject) => {
             if (this.state.isConnected) {
-                let imgRef = this.storage
-                    .ref(`${this.CHATROOMS}/${this.state.roomName}`)
+                let fileRef = this.storage
+                    .ref(`${this.CHATROOMS}/${this.state.roomName}/${file.type}`)
                     .child(file.name)
-
-                imgRef.putString(file.content, 'data_url')
-                    .then(() => {
-                        imgRef.getDownloadURL()
-                            .then(resolve)
-                            .catch(reject)
-                    })
+                switch (file.type) {
+                    case ATTACHMENT_TYPE_IMAGE:
+                        fileRef.putString(file.content, 'data_url')
+                            .then(() => {
+                                fileRef.getDownloadURL()
+                                    .then(resolve)
+                                    .catch(reject)
+                            })
+                        break;
+                    case ATTACHMENT_TYPE_VIDEO:
+                        fileRef.put(file.content)
+                            .then(() => {
+                                fileRef.getDownloadURL()
+                                    .then(resolve)
+                                    .catch(reject)
+                            })
+                        break;
+                    default:
+                        break;
+                }
             }
         })
     }

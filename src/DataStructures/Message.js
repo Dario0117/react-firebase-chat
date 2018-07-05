@@ -13,4 +13,8 @@ export default class Message {
     addLink(link) {
         this.attachments.link = link;
     }
+
+    addVideo(vid) {
+        this.attachments.video = vid;
+    }
 }

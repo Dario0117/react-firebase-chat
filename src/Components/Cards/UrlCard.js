@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-export default class ExternalChatMessage extends Component {
+export default class UrlCard extends Component {
 
     render() {
         let link = this.props.link;

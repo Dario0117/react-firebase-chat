@@ -15,4 +15,4 @@ Funcionalidades:
 - [x] Enviar imágenes
     - [x] Se pueden pegar desde el porta papeles
     - [x] Se pueden mandar desde el selector de archivos
-- [ ] Enviar videos
+- [x] Enviar videos

@@ -2,14 +2,16 @@ import React, { Component } from 'react'
 import UrlFromInput from '../Utils/UrlFromInput'
 import UrlCard from './Cards/UrlCard'
 import ImgCard from './Cards/ImgCard'
-import AttachmentLink from '../DataStructures/Attachments/Link'
+import VidCard from './Cards/VidCard'
 import UrlMeta from '../Utils/UrlMeta'
 import Clipboard from '../Utils/ImgFromClipboard'
 import FileChooser from '../Utils/ImgFromFile'
+import AttachmentLink from '../DataStructures/Attachments/Link'
 import AttachmentImage from '../DataStructures/Attachments/Image'
 import {
     ATTACHMENT_TYPE_IMAGE,
     ATTACHMENT_TYPE_LINK,
+    ATTACHMENT_TYPE_VIDEO,
 } from './../DataStructures/Constants'
 
 export default class MessageInput extends Component {
@@ -63,9 +65,23 @@ export default class MessageInput extends Component {
         })
     }
 
+    addVidAttachment = video => {
+        this.setState({
+            attachment: video,
+            attachmentType: ATTACHMENT_TYPE_VIDEO,
+        })
+    }
+
     handleFileChooser = e => {
-        FileChooser.imageASBase64(e.target.files[0])
-            .then(this.addImgAttachment)
+        let files = e.target.files;
+        if (files) {
+            if (files[0].type.indexOf('image') !== -1) {
+                FileChooser.imageASBase64(e.target.files[0])
+                .then(this.addImgAttachment)
+            } else if (files[0].type === 'video/mp4') {
+                this.addVidAttachment(files[0])
+            }
+        }
     }
 
     handleImputChange = e => {
@@ -127,6 +143,11 @@ export default class MessageInput extends Component {
             case ATTACHMENT_TYPE_LINK:
                 card = <UrlCard link={this.state.attachment} />
                 break;
+
+            case ATTACHMENT_TYPE_VIDEO:
+                card = <VidCard vid={this.state.attachment} />
+                break;
+
             default:
                 break;
         }
@@ -148,7 +169,7 @@ export default class MessageInput extends Component {
                     type="file"
                     id="attachment"
                     onChange={this.handleFileChooser}
-                    accept="image/*"
+                    accept="image/*, video/mp4"
                 />
                 <br />
                 {card}
