@@ -8,6 +8,10 @@ import ChatBox from './ChatBox'
 import Message from '../DataStructures/Message'
 import AttachmentImage from '../DataStructures/Attachments/Image'
 import AttachmentLink from '../DataStructures/Attachments/Link'
+import {
+    ATTACHMENT_TYPE_IMAGE,
+    ATTACHMENT_TYPE_LINK,
+} from '../DataStructures/Constants'
 
 export default class App extends Component {
     constructor(props) {
@@ -89,7 +93,7 @@ export default class App extends Component {
             delete msg.id;
             msg.username = this.state.username;
             msg.message = input.message;
-            if (input.attachmentType === 'img') {
+            if (input.attachmentType === ATTACHMENT_TYPE_IMAGE) {
                 let url = await this.uploadContent({
                     name: msgRef.key,
                     content: input.attachment.full,
@@ -99,7 +103,7 @@ export default class App extends Component {
                 img.thumbnail = url;
                 msg.addImage(img);
             }
-            if (input.attachmentType === 'link') {
+            if (input.attachmentType === ATTACHMENT_TYPE_LINK) {
                 msg.addLink(input.attachment);
             }
             msgRef.set(msg)

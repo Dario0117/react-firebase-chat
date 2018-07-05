@@ -4,8 +4,13 @@ import UrlCard from './Cards/UrlCard'
 import ImgCard from './Cards/ImgCard'
 import AttachmentLink from '../DataStructures/Attachments/Link'
 import UrlMeta from '../Utils/UrlMeta'
-import { imageASBase64 } from '../Utils/ImgFromClipboard'
+import Clipboard from '../Utils/ImgFromClipboard'
+import FileChooser from '../Utils/ImgFromFile'
 import AttachmentImage from '../DataStructures/Attachments/Image'
+import {
+    ATTACHMENT_TYPE_IMAGE,
+    ATTACHMENT_TYPE_LINK,
+} from './../DataStructures/Constants'
 
 export default class MessageInput extends Component {
     constructor(props) {
@@ -41,11 +46,26 @@ export default class MessageInput extends Component {
                     link.url = meta.url;
                     this.setState({
                         attachment: link,
-                        attachmentType: 'link',
+                        attachmentType: ATTACHMENT_TYPE_LINK,
                     })
                     this.showUrlCard = false;
                 });
         }
+    }
+
+    addImgAttachment = img64 => {
+        let img = new AttachmentImage();
+        img.full = img64;
+        img.thumbnail = img64;
+        this.setState({
+            attachment: img,
+            attachmentType: ATTACHMENT_TYPE_IMAGE,
+        })
+    }
+
+    handleFileChooser = e => {
+        FileChooser.imageASBase64(e.target.files[0])
+            .then(this.addImgAttachment)
     }
 
     handleImputChange = e => {
@@ -81,15 +101,7 @@ export default class MessageInput extends Component {
         if (e.clipboardData.items[0].type === 'text/plain') {
             this.addUrlAttachment(value);
         } else {
-            imageASBase64(e, image => {
-                let img = new AttachmentImage();
-                img.full = image;
-                img.thumbnail = image;
-                this.setState({
-                    attachment: img,
-                    attachmentType: 'img',
-                })
-            })
+            Clipboard.imageASBase64(e, this.addImgAttachment)
         }
     }
 
@@ -108,11 +120,11 @@ export default class MessageInput extends Component {
     render() {
         let card = '';
         switch (this.state.attachmentType) {
-            case 'img':
+            case ATTACHMENT_TYPE_IMAGE:
                 card = <ImgCard img={this.state.attachment} />
                 break;
 
-            case 'link':
+            case ATTACHMENT_TYPE_LINK:
                 card = <UrlCard link={this.state.attachment} />
                 break;
             default:
@@ -131,6 +143,12 @@ export default class MessageInput extends Component {
                     type="button"
                     value="Send"
                     onClick={this.handleSendMessage}
+                />
+                <input
+                    type="file"
+                    id="attachment"
+                    onChange={this.handleFileChooser}
+                    accept="image/*"
                 />
                 <br />
                 {card}
