@@ -5,9 +5,9 @@ export default class ConnectForm extends Component {
         super(props);
 
         this.state = {
-            username: '',
-            roomName: '',
-            password: '',
+            email2: '',
+            password2: '',
+            roomName2: '',
         };
 
         this.handleImputChange = this.handleImputChange.bind(this);
@@ -23,10 +23,14 @@ export default class ConnectForm extends Component {
 
     handleConnectClick(e) {
         e.preventDefault();
-        if (this.state.username && this.state.roomName) {
+        let { email2, password2, roomName2 } = this.state;
+        if (email2 && password2 && roomName2) {
             this.props.handleConnect({
-                username: this.state.username,
-                roomName: this.state.roomName,
+                email: email2,
+                password: password2,
+                roomName: roomName2,
+            }).catch(error => {
+                console.log(error.message);
             });
         }
     }
@@ -36,17 +40,25 @@ export default class ConnectForm extends Component {
             <div>
                 <h2>Sing in</h2>
                 <input
-                    type="text"
-                    id="username"
-                    value={this.state.username}
+                    type="email"
+                    id="email2"
+                    value={this.state.email2}
                     onChange={this.handleImputChange}
-                    placeholder="Type your username"
+                    placeholder="Type your email"
+                />
+                <br />
+                <input
+                    type="password"
+                    id="password2"
+                    value={this.state.password2}
+                    onChange={this.handleImputChange}
+                    placeholder="Type the password"
                 />
                 <br />
                 <input
                     type="text"
-                    id="roomName"
-                    value={this.state.roomName}
+                    id="roomName2"
+                    value={this.state.roomName2}
                     onChange={this.handleImputChange}
                     placeholder="Type the room name"
                 />

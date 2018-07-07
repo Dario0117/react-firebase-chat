@@ -4,10 +4,11 @@ import 'firebase/database';
 import 'firebase/storage';
 import 'firebase/auth';
 import firebaseConfig from '../firebase-config';
-import SingInForm from './SingInForm';
-import SingUpForm from './SingUpForm';
+import SignInForm from './SignInForm';
+import SignUpForm from './SignUpForm';
 import ChatBox from './ChatBox';
 import Message from '../DataStructures/Message';
+import User from '../DataStructures/User';
 import AttachmentImage from '../DataStructures/Attachments/Image';
 import AttachmentLink from '../DataStructures/Attachments/Link';
 import AttachmentVideo from '../DataStructures/Attachments/Video';
@@ -24,6 +25,7 @@ export default class App extends Component {
         this.database = null;
         this.CHATROOMS = 'chatrooms/';
         this.MESSAGES = 'messages/';
+        this.USERS = 'users/';
 
         this.storage = null;
         this.auth = null;
@@ -39,6 +41,8 @@ export default class App extends Component {
         this.handleDisconnect = this.handleDisconnect.bind(this);
         this.handleSendMessage = this.handleSendMessage.bind(this);
         this.uploadContent = this.uploadContent.bind(this);
+        this.handleSignUp = this.handleSignUp.bind(this);
+        this.fetchMessages = this.fetchMessages.bind(this);
     }
 
     getMessagesFromSnap(snap) {
@@ -77,24 +81,63 @@ export default class App extends Component {
         });
     }
 
-    handleConnect({ roomName, username }) {
+    fetchMessages(user, roomName) {
         // TODO: Change value event for append child for optimization
         this.database
             .ref(`${this.CHATROOMS}/${roomName}/${this.MESSAGES}`)
             .on('value', snap => {
                 this.setState({
                     roomName,
-                    username,
+                    username: user.val().name,
                     chatMessages: this.getMessagesFromSnap(snap),
                     isConnected: true,
                 });
             });
     }
 
+    handleSignUp({ email, password, name, roomName }) {
+        return new Promise((resolve, reject) => {
+            this.auth.createUserWithEmailAndPassword(email, password)
+                .then(() => {
+                    let { uid, email } = this.auth.currentUser;
+                    let user = new User();
+                    user.id = uid;
+                    user.email = email;
+                    user.name = name;
+                    let { id, ...u } = user;
+                    this.database
+                        .ref(`${this.USERS}/${user.id}`)
+                        .set(u);
+                    this.handleConnect({
+                        roomName,
+                        password,
+                        email,
+                    });
+                    resolve();
+                })
+                .catch(reject)
+        });
+    }
+
+    handleConnect({ roomName, email, password }) {
+        return new Promise((resolve, reject) => {
+            this.auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    let { uid } = this.auth.currentUser;
+                    this.database
+                        .ref(`${this.USERS}/${uid}`)
+                        .on('value', user => this.fetchMessages(user, roomName));
+                    resolve();
+                })
+                .catch(reject);
+        });
+    }
+
     handleDisconnect() {
         this.database
             .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
             .off();
+        this.auth.signOut();
         this.setState({
             isConnected: false,
         });
@@ -200,10 +243,12 @@ export default class App extends Component {
             return (
                 <div>
                     <h1>React firebase chat</h1>
-                    <SingInForm
+                    <SignInForm
                         handleConnect={this.handleConnect}
                     />
-                    <SingUpForm />
+                    <SignUpForm
+                        handleSignUp={this.handleSignUp}
+                    />
                 </div>
             );
         }
