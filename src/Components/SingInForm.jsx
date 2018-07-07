@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 
-export default class Connect extends Component {
+export default class ConnectForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             username: '',
             roomName: '',
-            disabled: false,
+            password: '',
         };
 
         this.handleImputChange = this.handleImputChange.bind(this);
         this.handleConnectClick = this.handleConnectClick.bind(this);
-        this.handleDisconnectClick = this.handleDisconnectClick.bind(this);
     }
 
     handleImputChange(e) {
@@ -25,9 +24,6 @@ export default class Connect extends Component {
     handleConnectClick(e) {
         e.preventDefault();
         if (this.state.username && this.state.roomName) {
-            this.setState({
-                disabled: true
-            });
             this.props.handleConnect({
                 username: this.state.username,
                 roomName: this.state.roomName,
@@ -35,43 +31,30 @@ export default class Connect extends Component {
         }
     }
 
-    handleDisconnectClick(e) {
-        e.preventDefault();
-        this.setState({
-            disabled: false
-        });
-        this.props.handleDisconnect();
-    }
-
     render() {
         return (
             <div>
+                <h2>Sing in</h2>
                 <input
                     type="text"
                     id="username"
                     value={this.state.username}
                     onChange={this.handleImputChange}
                     placeholder="Type your username"
-                    disabled={this.state.disabled ? 'disabled' : ''}
                 />
+                <br />
                 <input
                     type="text"
                     id="roomName"
                     value={this.state.roomName}
                     onChange={this.handleImputChange}
                     placeholder="Type the room name"
-                    disabled={this.state.disabled ? 'disabled' : ''}
                 />
+                <br />
                 <input
                     type="button"
                     value="Connect"
                     onClick={this.handleConnectClick}
-                    disabled={this.state.disabled ? 'disabled' : ''}
-                />
-                <input
-                    type="button"
-                    value="Disconnect"
-                    onClick={this.handleDisconnectClick}
                 />
             </div>
         );

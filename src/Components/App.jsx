@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
+import 'firebase/auth';
 import firebaseConfig from '../firebase-config';
-import Connect from './Connect';
+import SingInForm from './SingInForm';
+import SingUpForm from './SingUpForm';
 import ChatBox from './ChatBox';
 import Message from '../DataStructures/Message';
 import AttachmentImage from '../DataStructures/Attachments/Image';
@@ -24,6 +26,7 @@ export default class App extends Component {
         this.MESSAGES = 'messages/';
 
         this.storage = null;
+        this.auth = null;
 
         this.state = {
             chatMessages: [],
@@ -75,6 +78,7 @@ export default class App extends Component {
     }
 
     handleConnect({ roomName, username }) {
+        // TODO: Change value event for append child for optimization
         this.database
             .ref(`${this.CHATROOMS}/${roomName}/${this.MESSAGES}`)
             .on('value', snap => {
@@ -180,33 +184,28 @@ export default class App extends Component {
         firebase.initializeApp(firebaseConfig);
         this.database = firebase.database();
         this.storage = firebase.storage();
+        this.auth = firebase.auth();
     }
 
     render() {
-        let connectionStatus = '';
-        let chatbox = '';
         if (this.state.isConnected) {
-            connectionStatus = <h2>Your status is online</h2>;
-            chatbox = (
+            return (
                 <ChatBox
                     handleSendMessage={this.handleSendMessage}
                     messageList={this.state.chatMessages}
+                    handleDisconnect={this.handleDisconnect}
                 />
             );
         } else {
-            connectionStatus = <h2>Your status is offline</h2>;
+            return (
+                <div>
+                    <h1>React firebase chat</h1>
+                    <SingInForm
+                        handleConnect={this.handleConnect}
+                    />
+                    <SingUpForm />
+                </div>
+            );
         }
-
-        return (
-            <div>
-                <h1>React firebase chat</h1>
-                {connectionStatus}
-                <Connect
-                    handleConnect={this.handleConnect}
-                    handleDisconnect={this.handleDisconnect}
-                />
-                {chatbox}
-            </div>
-        );
     }
 }
