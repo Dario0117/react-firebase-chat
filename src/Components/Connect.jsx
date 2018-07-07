@@ -35,7 +35,7 @@ export default class Connect extends Component {
         }
     }
 
-    handleDisconnectClick = e => {
+    handleDisconnectClick(e) {
         e.preventDefault();
         this.setState({
             disabled: false
