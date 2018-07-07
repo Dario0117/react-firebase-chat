@@ -1,4 +1,4 @@
-module.exports = {
+const firebaseConfig = {
     apiKey: "",
     authDomain: "",
     databaseURL: "",
@@ -6,3 +6,5 @@ module.exports = {
     storageBucket: "",
     messagingSenderId: ""
 }
+
+export default firebaseConfig;

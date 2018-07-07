@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 export default class UrlCard extends Component {
 
@@ -12,6 +12,6 @@ export default class UrlCard extends Component {
                 <span>{`${host.protocol}//${host.hostname}`}</span><br />
                 <img src={link.image} alt="Not found" height="80" />
             </div>
-        )
+        );
     }
 }

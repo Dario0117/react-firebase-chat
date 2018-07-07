@@ -1,18 +1,18 @@
-import React, { Component } from 'react'
-import UrlFromInput from '../Utils/UrlFromInput'
-import UrlCard from './Cards/UrlCard'
-import ImgCard from './Cards/ImgCard'
-import VidCard from './Cards/VidCard'
-import UrlMeta from '../Utils/UrlMeta'
-import Clipboard from '../Utils/ImgFromClipboard'
-import FileChooser from '../Utils/ImgFromFile'
-import AttachmentLink from '../DataStructures/Attachments/Link'
-import AttachmentImage from '../DataStructures/Attachments/Image'
+import React, { Component } from 'react';
+import UrlFromInput from '../Utils/UrlFromInput';
+import UrlCard from './Cards/UrlCard';
+import ImgCard from './Cards/ImgCard';
+import VidCard from './Cards/VidCard';
+import UrlMeta from '../Utils/UrlMeta';
+import Clipboard from '../Utils/ImgFromClipboard';
+import FileChooser from '../Utils/ImgFromFile';
+import AttachmentLink from '../DataStructures/Attachments/Link';
+import AttachmentImage from '../DataStructures/Attachments/Image';
 import {
     ATTACHMENT_TYPE_IMAGE,
     ATTACHMENT_TYPE_LINK,
     ATTACHMENT_TYPE_VIDEO,
-} from './../DataStructures/Constants'
+} from '../DataStructures/Constants';
 
 export default class MessageInput extends Component {
     constructor(props) {
@@ -24,19 +24,27 @@ export default class MessageInput extends Component {
             attachmentType: '',
         };
         this.showUrlCard = true;
+
+        this.addUrlAttachment = this.addUrlAttachment.bind(this);
+        this.addImgAttachment = this.addImgAttachment.bind(this);
+        this.addVidAttachment = this.addVidAttachment.bind(this);
+        this.handleFileChooser = this.handleFileChooser.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleInputPaste = this.handleInputPaste.bind(this);
+        this.handleSendMessage = this.handleSendMessage.bind(this);
     }
 
-    getMetaFromURL = async url => {
+    async getMetaFromURL(url) {
         let { title, description, image } = await UrlMeta(url);
         return {
             title,
             description,
             image,
-            url
+            url,
         };
     }
 
-    addUrlAttachment = value => {
+    addUrlAttachment(value) {
         let url = UrlFromInput(value);
         if (url && this.showUrlCard) {
             this.getMetaFromURL(url)
@@ -55,36 +63,36 @@ export default class MessageInput extends Component {
         }
     }
 
-    addImgAttachment = img64 => {
+    addImgAttachment(img64) {
         let img = new AttachmentImage();
         img.full = img64;
         img.thumbnail = img64;
         this.setState({
             attachment: img,
             attachmentType: ATTACHMENT_TYPE_IMAGE,
-        })
+        });
     }
 
-    addVidAttachment = video => {
+    addVidAttachment(video) {
         this.setState({
             attachment: video,
             attachmentType: ATTACHMENT_TYPE_VIDEO,
-        })
+        });
     }
 
-    handleFileChooser = e => {
+    handleFileChooser(e) {
         let files = e.target.files;
         if (files) {
             if (files[0].type.indexOf('image') !== -1) {
-                FileChooser.imageASBase64(e.target.files[0])
-                .then(this.addImgAttachment)
+                FileChooser.imageAsBase64(e.target.files[0])
+                    .then(this.addImgAttachment);
             } else if (files[0].type === 'video/mp4') {
-                this.addVidAttachment(files[0])
+                this.addVidAttachment(files[0]);
             }
         }
     }
 
-    handleImputChange = e => {
+    handleInputChange(e) {
         let { id, value } = e.target;
         /**
          * When user type url, it only accept one character,
@@ -99,8 +107,9 @@ export default class MessageInput extends Component {
         if (value[value.length - 1] === ' ') {
             this.addUrlAttachment(value);
         }
+
         let newState = {
-            [id]: value
+            [id]: value,
         }
 
         if (!value) {
@@ -112,16 +121,16 @@ export default class MessageInput extends Component {
         this.setState(newState);
     }
 
-    handleInputPaste = e => {
+    handleInputPaste(e) {
         let value = e.clipboardData.getData('Text');
         if (e.clipboardData.items[0].type === 'text/plain') {
             this.addUrlAttachment(value);
         } else {
-            Clipboard.imageASBase64(e, this.addImgAttachment)
+            Clipboard.imageASBase64(e, this.addImgAttachment);
         }
     }
 
-    handleSendMessage = e => {
+    handleSendMessage(e) {
         e.preventDefault();
         if (this.state.message || this.state.attachmentType) {
             this.props.handleSendMessage(this.state);
@@ -129,27 +138,28 @@ export default class MessageInput extends Component {
                 message: '',
                 attachment: '',
                 attachmentType: '',
-            })
+            });
         }
     }
 
     render() {
         let card = '';
         switch (this.state.attachmentType) {
-            case ATTACHMENT_TYPE_IMAGE:
+            case ATTACHMENT_TYPE_IMAGE: {
                 card = <ImgCard img={this.state.attachment} />
                 break;
-
-            case ATTACHMENT_TYPE_LINK:
+            }
+            case ATTACHMENT_TYPE_LINK: {
                 card = <UrlCard link={this.state.attachment} />
                 break;
-
-            case ATTACHMENT_TYPE_VIDEO:
+            }
+            case ATTACHMENT_TYPE_VIDEO: {
                 card = <VidCard vid={this.state.attachment} />
                 break;
-
-            default:
+            }
+            default: {
                 break;
+            }
         }
         return (
             <div>
@@ -157,7 +167,7 @@ export default class MessageInput extends Component {
                     type="text"
                     id="message"
                     value={this.state.message}
-                    onChange={this.handleImputChange}
+                    onChange={this.handleInputChange}
                     onPaste={this.handleInputPaste}
                     placeholder="Type your message..." />
                 <input
@@ -174,6 +184,6 @@ export default class MessageInput extends Component {
                 <br />
                 {card}
             </div>
-        )
+        );
     }
 }

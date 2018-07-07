@@ -97,7 +97,7 @@ function retrieveImageFromClipboardAsBase64(pasteEvent, callback, imageFormat) {
     }
 }
 
-module.exports = {
+export default {
     imageAsBLOB: retrieveImageFromClipboardAsBlob,
-    imageASBase64: retrieveImageFromClipboardAsBase64
-}
+    imageASBase64: retrieveImageFromClipboardAsBase64,
+};

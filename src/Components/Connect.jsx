@@ -1,30 +1,37 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 export default class Connect extends Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             username: '',
             roomName: '',
             disabled: false,
-        }
+        };
+
+        this.handleImputChange = this.handleImputChange.bind(this);
+        this.handleConnectClick = this.handleConnectClick.bind(this);
+        this.handleDisconnectClick = this.handleDisconnectClick.bind(this);
     }
 
-    handleImputChange = e => {
+    handleImputChange(e) {
         let { id, value } = e.target;
         this.setState({
             [id]: value
         });
     }
 
-    handleConnectClick = e => {
+    handleConnectClick(e) {
         e.preventDefault();
         if (this.state.username && this.state.roomName) {
             this.setState({
                 disabled: true
-            })
-            this.props.handleConnect(Object.assign({}, this.state))
+            });
+            this.props.handleConnect({
+                username: this.state.username,
+                roomName: this.state.roomName,
+            });
         }
     }
 
@@ -32,8 +39,8 @@ export default class Connect extends Component {
         e.preventDefault();
         this.setState({
             disabled: false
-        })
-        this.props.handleDisconnect()
+        });
+        this.props.handleDisconnect();
     }
 
     render() {
@@ -67,6 +74,6 @@ export default class Connect extends Component {
                     onClick={this.handleDisconnectClick}
                 />
             </div>
-        )
+        );
     }
 }

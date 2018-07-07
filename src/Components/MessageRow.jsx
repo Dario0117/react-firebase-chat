@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
-import UrlCard from './Cards/UrlCard'
-import ImgCard from './Cards/ImgCard'
-import VidCard from './Cards/VidCard'
+import React, { Component } from 'react';
+import UrlCard from './Cards/UrlCard';
+import ImgCard from './Cards/ImgCard';
+import VidCard from './Cards/VidCard';
 
 export default class ChatMessage extends Component {
     render() {
@@ -22,6 +22,6 @@ export default class ChatMessage extends Component {
                 <span> {this.props.msg.message}</span>
                 {card}
             </div>
-        )
+        );
     }
 }

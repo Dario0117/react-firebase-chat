@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 export default class ImgCard extends Component {
 
@@ -8,6 +8,6 @@ export default class ImgCard extends Component {
             <div>
                 <img src={image.full} alt="" />
             </div>
-        )
+        );
     }
 }

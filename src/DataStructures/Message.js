@@ -3,7 +3,7 @@ export default class Message {
         this.id = '';
         this.message = '';
         this.username = '';
-        this.attachments = {}
+        this.attachments = {};
     }
 
     addImage(img) {

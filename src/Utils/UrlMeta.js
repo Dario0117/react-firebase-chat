@@ -1,4 +1,4 @@
-module.exports = url => {
+function getMetaFromURL(url) {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         const proxy = "https://metascraper-implementation.herokuapp.com/"
@@ -13,3 +13,5 @@ module.exports = url => {
         }));
     });
 };
+
+export default getMetaFromURL;

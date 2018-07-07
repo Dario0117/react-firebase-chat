@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import icon from './assets/videoIcon.svg'
+import React, { Component } from 'react';
+import icon from './assets/videoIcon.svg';
 
 export default class VidCard extends Component {
 
@@ -11,14 +11,14 @@ export default class VidCard extends Component {
                 <div>
                     <video src={vid.source} width="220" type="video/mp4" controls />
                 </div>
-            )
+            );
         } else {
             return (
                 <div>
                     <span>{vid.name}</span><br />
                     <img src={icon} alt="Not found" height="80" />
                 </div>
-            )
+            );
         }
     }
 }

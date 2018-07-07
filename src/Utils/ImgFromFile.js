@@ -7,6 +7,6 @@ function getBase64(file) {
     });
 }
 
-module.exports = {
-    imageASBase64: getBase64,
-}
+export default {
+    imageAsBase64: getBase64,
+};

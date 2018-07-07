@@ -1,5 +1,3 @@
-module.exports = {
-    ATTACHMENT_TYPE_IMAGE: 'img',
-    ATTACHMENT_TYPE_LINK: 'link',
-    ATTACHMENT_TYPE_VIDEO: 'vid',
-}
+export const ATTACHMENT_TYPE_IMAGE = 'img';
+export const ATTACHMENT_TYPE_LINK = 'link';
+export const ATTACHMENT_TYPE_VIDEO = 'vid';
