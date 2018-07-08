@@ -30,6 +30,8 @@ export default class App extends Component {
         this.storage = null;
         this.auth = null;
 
+        this.messagesReference = null;
+
         this.state = {
             chatMessages: [],
             roomName: '',
@@ -43,56 +45,60 @@ export default class App extends Component {
         this.uploadContent = this.uploadContent.bind(this);
         this.handleSignUp = this.handleSignUp.bind(this);
         this.fetchMessages = this.fetchMessages.bind(this);
+        this.listenNewMessages = this.listenNewMessages.bind(this);
     }
 
-    getMessagesFromSnap(snap) {
+    getMessageFromSnap(snap) {
         let snapRaw = snap.val();
-        if (snapRaw === null) {
-            return [];
-        }
-        let snapKeys = Object.keys(snapRaw);
-        return snapKeys.map(k => {
-            let msg = new Message();
-            msg.id = k;
-            msg.message = snapRaw[k].message;
-            msg.username = snapRaw[k].username;
-            let attachments = snapRaw[k].attachments;
-            if (attachments) {
-                if (attachments.image) {
-                    let img = new AttachmentImage();
-                    img.full = attachments.image.full;
-                    img.thumbnail = attachments.image.thumbnail;
-                    msg.addImage(img);
-                } else if (attachments.link) {
-                    let link = new AttachmentLink();
-                    link.description = attachments.link.description;
-                    link.image = attachments.link.image;
-                    link.title = attachments.link.title;
-                    link.url = attachments.link.url;
-                    msg.addLink(link);
-                } else if (attachments.video) {
-                    let video = new AttachmentVideo();
-                    video.name = attachments.video.name;
-                    video.source = attachments.video.source;
-                    msg.addVideo(video);
-                }
+        let msg = new Message();
+        msg.id = snap.key;
+        msg.message = snapRaw.message;
+        msg.username = snapRaw.username;
+        let attachments = snapRaw.attachments;
+        if (attachments) {
+            if (attachments.image) {
+                let img = new AttachmentImage();
+                img.full = attachments.image.full;
+                img.thumbnail = attachments.image.thumbnail;
+                msg.addImage(img);
+            } else if (attachments.link) {
+                let link = new AttachmentLink();
+                link.description = attachments.link.description;
+                link.image = attachments.link.image;
+                link.title = attachments.link.title;
+                link.url = attachments.link.url;
+                msg.addLink(link);
+            } else if (attachments.video) {
+                let video = new AttachmentVideo();
+                video.name = attachments.video.name;
+                video.source = attachments.video.source;
+                msg.addVideo(video);
             }
-            return msg;
-        });
+        }
+
+        return msg;
     }
 
     fetchMessages(user, roomName) {
-        // TODO: Change value event for append child for optimization
-        this.database
-            .ref(`${this.CHATROOMS}/${roomName}/${this.MESSAGES}`)
-            .on('value', snap => {
+        this.messagesReference = this.database
+            .ref(`${this.CHATROOMS}/${roomName}/${this.MESSAGES}`);
+        this.setState({
+            roomName,
+            username: user.val().name,
+            isConnected: true,
+        });
+        this.listenNewMessages();
+    }
+
+    listenNewMessages() {
+        this.messagesReference
+            .on('child_added', snap => {
+                let newMessage = this.getMessageFromSnap(snap);
+                let nMsgList = this.state.chatMessages.concat(newMessage);
                 this.setState({
-                    roomName,
-                    username: user.val().name,
-                    chatMessages: this.getMessagesFromSnap(snap),
-                    isConnected: true,
+                    chatMessages: nMsgList,
                 });
-            });
+            })
     }
 
     handleSignUp({ email, password, name, roomName }) {
@@ -126,7 +132,7 @@ export default class App extends Component {
                     let { uid } = this.auth.currentUser;
                     this.database
                         .ref(`${this.USERS}/${uid}`)
-                        .on('value', user => this.fetchMessages(user, roomName));
+                        .once('value', user => this.fetchMessages(user, roomName));
                     resolve();
                 })
                 .catch(reject);
@@ -140,6 +146,7 @@ export default class App extends Component {
         this.auth.signOut();
         this.setState({
             isConnected: false,
+            chatMessages: [],
         });
     }
 
@@ -159,7 +166,7 @@ export default class App extends Component {
                         name: msgRef.key,
                         content: input.attachment.full,
                         type: input.attachmentType,
-                    })
+                    });
                     let img = new AttachmentImage();
                     img.full = url;
                     img.thumbnail = url;
