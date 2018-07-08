@@ -3,12 +3,12 @@ import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
 import 'firebase/auth';
+import moment from 'moment';
 import firebaseConfig from '../firebase-config';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 import ChatBox from './ChatBox';
 import Message from '../DataStructures/Message';
-import User from '../DataStructures/User';
 import AttachmentImage from '../DataStructures/Attachments/Image';
 import AttachmentLink from '../DataStructures/Attachments/Link';
 import AttachmentVideo from '../DataStructures/Attachments/Video';
@@ -30,13 +30,17 @@ export default class App extends Component {
         this.storage = null;
         this.auth = null;
 
-        this.messagesReference = null;
+        this.messagesRef = null;
+        this.userOnRoomRef = null;
+
+        this.lastTimeMouseMove = moment().valueOf();
 
         this.state = {
             chatMessages: [],
             roomName: '',
             username: '',
             isConnected: false,
+            users: [],
         };
 
         this.handleConnect = this.handleConnect.bind(this);
@@ -46,6 +50,9 @@ export default class App extends Component {
         this.handleSignUp = this.handleSignUp.bind(this);
         this.fetchMessages = this.fetchMessages.bind(this);
         this.listenNewMessages = this.listenNewMessages.bind(this);
+        this.updateOnlineStatus = this.updateOnlineStatus.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+        this.updateOnlineUsers = this.updateOnlineUsers.bind(this);
     }
 
     getMessageFromSnap(snap) {
@@ -79,8 +86,23 @@ export default class App extends Component {
         return msg;
     }
 
+    getUsersFromSnap(snap) {
+        let snapRaw = snap.val();
+        let snapKeys = Object.keys(snapRaw);
+
+        return snapKeys.map(k => {
+            let user = {
+                key: k,
+                time: snapRaw[k].time,
+                name: snapRaw[k].username,
+            };
+
+            return user;
+        });
+    }
+
     fetchMessages(user, roomName) {
-        this.messagesReference = this.database
+        this.messagesRef = this.database
             .ref(`${this.CHATROOMS}/${roomName}/${this.MESSAGES}`);
         this.setState({
             roomName,
@@ -91,7 +113,7 @@ export default class App extends Component {
     }
 
     listenNewMessages() {
-        this.messagesReference
+        this.messagesRef
             .on('child_added', snap => {
                 let newMessage = this.getMessageFromSnap(snap);
                 let nMsgList = this.state.chatMessages.concat(newMessage);
@@ -106,13 +128,12 @@ export default class App extends Component {
             this.auth.createUserWithEmailAndPassword(email, password)
                 .then(() => {
                     let { uid, email } = this.auth.currentUser;
-                    let user = new User();
-                    user.id = uid;
-                    user.email = email;
-                    user.name = name;
-                    let { id, ...u } = user;
+                    let u = {
+                        email,
+                        name,
+                    }
                     this.database
-                        .ref(`${this.USERS}/${user.id}`)
+                        .ref(`${this.USERS}/${uid}`)
                         .set(u);
                     this.handleConnect({
                         roomName,
@@ -125,6 +146,37 @@ export default class App extends Component {
         });
     }
 
+    updateOnlineStatus() {
+        let now = moment().valueOf();
+        this.userOnRoomRef
+            .set({
+                time: now,
+                username: this.state.username,
+            });
+    }
+
+    updateOnlineUsers(users) {
+        let snapUsers = this.getUsersFromSnap(users);
+        let msBetweenConnections = 2000;
+        let newUsers = snapUsers.map(nUser => {
+            let u = {
+                time: moment().valueOf(),
+                key: nUser.key,
+                status: false,
+                name: nUser.name,
+            }
+
+            if ((u.time - nUser.time) <= msBetweenConnections) {
+                u.status = true;
+            }
+
+            return u;
+        });
+        this.setState({
+            users: newUsers,
+        });
+    }
+
     handleConnect({ roomName, email, password }) {
         return new Promise((resolve, reject) => {
             this.auth.signInWithEmailAndPassword(email, password)
@@ -133,6 +185,15 @@ export default class App extends Component {
                     this.database
                         .ref(`${this.USERS}/${uid}`)
                         .once('value', user => this.fetchMessages(user, roomName));
+
+                    this.userOnRoomRef = this.database
+                        .ref(`${this.CHATROOMS}/${roomName}/${this.USERS}/${uid}`);
+
+                    this.database
+                        .ref(`${this.CHATROOMS}/${roomName}/${this.USERS}`)
+                        .on('value', this.updateOnlineUsers);
+
+                    this.updateOnlineStatus();
                     resolve();
                 })
                 .catch(reject);
@@ -147,11 +208,13 @@ export default class App extends Component {
         this.setState({
             isConnected: false,
             chatMessages: [],
+            users: [],
         });
     }
 
     async handleSendMessage(input) {
         if (this.state.isConnected) {
+            this.updateOnlineStatus();
             let msgRef = this.database
                 .ref(`${this.CHATROOMS}/${this.state.roomName}/${this.MESSAGES}`)
                 .push();
@@ -237,14 +300,26 @@ export default class App extends Component {
         this.auth = firebase.auth();
     }
 
+    handleMouseMove(e) {
+        let now = moment().valueOf();
+        let msToAction = 3000;
+        if ((now - this.lastTimeMouseMove) >= msToAction) {
+            this.lastTimeMouseMove = now;
+            this.updateOnlineStatus();
+        }
+    }
+
     render() {
         if (this.state.isConnected) {
             return (
-                <ChatBox
-                    handleSendMessage={this.handleSendMessage}
-                    messageList={this.state.chatMessages}
-                    handleDisconnect={this.handleDisconnect}
-                />
+                <div onMouseMove={this.handleMouseMove}>
+                    <ChatBox
+                        handleSendMessage={this.handleSendMessage}
+                        messageList={this.state.chatMessages}
+                        handleDisconnect={this.handleDisconnect}
+                        users={this.state.users}
+                    />
+                </div>
             );
         } else {
             return (
