@@ -98,9 +98,9 @@ export default class MessageInput extends Component {
          * When user type url, it only accept one character,
          * ex: www.g instead of www.google.com,
          * to fix it, i check if the last character of
-         * the imput is a space, but, another "problem"
+         * the input is a space, but, another "problem"
          * appears, the space is strictly neccessary
-         * to process url on the imput :c,
+         * to process url on the input :c,
          * when the user paste an url, can not be recognized,
          * to fix it, i handle it on handleInputPaste function.
          */

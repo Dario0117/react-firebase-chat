@@ -40,7 +40,7 @@ export default class SingUpForm extends Component {
     render() {
         return (
             <div>
-                <h2>Sing up</h2>
+                <h2>Sign up</h2>
                 <input
                     type="email"
                     id="email"

@@ -116,9 +116,9 @@ export default class App extends Component {
         this.messagesRef
             .on('child_added', snap => {
                 let newMessage = this.getMessageFromSnap(snap);
-                let nMsgList = this.state.chatMessages.concat(newMessage);
+                let chatMessages = this.state.chatMessages.concat(newMessage);
                 this.setState({
-                    chatMessages: nMsgList,
+                    chatMessages,
                 });
             })
     }
@@ -128,13 +128,12 @@ export default class App extends Component {
             this.auth.createUserWithEmailAndPassword(email, password)
                 .then(() => {
                     let { uid, email } = this.auth.currentUser;
-                    let u = {
-                        email,
-                        name,
-                    }
                     this.database
                         .ref(`${this.USERS}/${uid}`)
-                        .set(u);
+                        .set({
+                            email,
+                            name,
+                        });
                     this.handleConnect({
                         roomName,
                         password,
@@ -147,10 +146,9 @@ export default class App extends Component {
     }
 
     updateOnlineStatus() {
-        let now = moment().valueOf();
         this.userOnRoomRef
             .set({
-                time: now,
+                time: moment().valueOf(),
                 username: this.state.username,
             });
     }
@@ -300,7 +298,7 @@ export default class App extends Component {
         this.auth = firebase.auth();
     }
 
-    handleMouseMove(e) {
+    handleMouseMove() {
         let now = moment().valueOf();
         let msToAction = 3000;
         if ((now - this.lastTimeMouseMove) >= msToAction) {

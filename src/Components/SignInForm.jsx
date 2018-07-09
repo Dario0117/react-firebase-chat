@@ -38,7 +38,7 @@ export default class ConnectForm extends Component {
     render() {
         return (
             <div>
-                <h2>Sing in</h2>
+                <h2>Sign in</h2>
                 <input
                     type="email"
                     id="email2"
