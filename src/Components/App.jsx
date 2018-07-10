@@ -326,6 +326,7 @@ export default class App extends Component {
                     <SignInForm
                         handleConnect={this.handleConnect}
                     />
+                    <h2>OR</h2>
                     <SignUpForm
                         handleSignUp={this.handleSignUp}
                     />
