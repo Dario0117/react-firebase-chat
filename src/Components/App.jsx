@@ -325,7 +325,6 @@ export default class App extends Component {
                     type="flex"
                     justify="space-around"
                     onMouseMove={this.handleMouseMove}
-                    style={{ overflowY: 'auto' }}
                 >
                     <ChatBox
                         handleSendMessage={this.handleSendMessage}
