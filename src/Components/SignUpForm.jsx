@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
 
 const FormItem = Form.Item;
 
@@ -16,7 +16,7 @@ class SingUpForm extends Component {
                     name,
                     roomName,
                 }).catch(error => {
-                    console.log(error.message);
+                    message.error(error.message);
                 });
             }
         });
