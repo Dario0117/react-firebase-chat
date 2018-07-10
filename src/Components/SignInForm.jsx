@@ -24,7 +24,6 @@ class ConnectForm extends Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <Form onSubmit={this.handleSubmit} className="login-form">
-                <h2>Sign in</h2>
                 <FormItem>
                     {getFieldDecorator('email2', {
                         rules: [{ required: true, message: 'Please input your Email!' }],

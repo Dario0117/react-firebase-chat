@@ -26,7 +26,6 @@ class SingUpForm extends Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <Form onSubmit={this.handleSubmit} className="login-form">
-                <h2>Sign up</h2>
                 <FormItem>
                     {getFieldDecorator('email', {
                         rules: [{ required: true, message: 'Please input your Email!' }],

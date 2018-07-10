@@ -18,6 +18,16 @@ import {
     ATTACHMENT_TYPE_VIDEO,
 } from '../DataStructures/Constants';
 
+import {
+    Layout,
+    Icon,
+    Row,
+    Col,
+    Card,
+} from 'antd';
+
+const { Header, Footer, Content } = Layout;
+
 export default class App extends Component {
     constructor(props) {
         super(props);
@@ -308,30 +318,73 @@ export default class App extends Component {
     }
 
     render() {
+        let content = '';
         if (this.state.isConnected) {
-            return (
-                <div onMouseMove={this.handleMouseMove}>
+            content = (
+                <Row
+                    type="flex"
+                    justify="space-around"
+                    onMouseMove={this.handleMouseMove}
+                    style={{ overflowY: 'auto' }}
+                >
                     <ChatBox
                         handleSendMessage={this.handleSendMessage}
                         messageList={this.state.chatMessages}
                         handleDisconnect={this.handleDisconnect}
                         users={this.state.users}
                     />
-                </div>
+                </Row>
             );
         } else {
-            return (
-                <div>
-                    <h1>React firebase chat</h1>
-                    <SignInForm
-                        handleConnect={this.handleConnect}
-                    />
-                    <h2>OR</h2>
-                    <SignUpForm
-                        handleSignUp={this.handleSignUp}
-                    />
-                </div>
+            content = (
+                <Row
+                    type="flex"
+                    justify="space-around"
+                    align="middle"
+                >
+                    <Col order={1} span={8}>
+                        <Card title="Sign in">
+                            <SignInForm
+                                handleConnect={this.handleConnect}
+                            />
+                        </Card>
+                    </Col>
+                    <Col order={2}>
+                        <h2>or</h2>
+                    </Col>
+                    <Col order={3} span={8}>
+                        <Card title="Sign up">
+                            <SignUpForm
+                                handleSignUp={this.handleSignUp}
+                            />
+                        </Card>
+                    </Col>
+                </Row>
             );
         }
+
+        return (
+            <Layout
+                style={{
+                    height: '100%',
+                    width: '100%',
+                    position: 'absolute'
+                }}
+            >
+                <Header style={{ textAlign: 'center' }}>
+                    <h1 style={{ color: '#fff' }}>React firebase chat</h1>
+                </Header>
+                <Content style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                }}>
+                    {content}
+                </Content>
+                <Footer style={{ textAlign: 'center' }}>
+                    React firebase chat ©2018 Created by <a href="https://github.com/Dario0117"><Icon type="github" /> Dario0117</a>
+                </Footer>
+            </Layout>
+        );
     }
 }
