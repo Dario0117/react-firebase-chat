@@ -18,6 +18,8 @@ import {
     ATTACHMENT_TYPE_VIDEO,
 } from '../DataStructures/Constants';
 
+import Title from './Utils/Title';
+
 import {
     Layout,
     Icon,
@@ -181,7 +183,7 @@ export default class App extends Component {
             return u;
         });
         this.setState({
-            users: newUsers,
+            users: newUsers.sort(user => user.status === false),
         });
     }
 
@@ -342,7 +344,7 @@ export default class App extends Component {
                     align="middle"
                 >
                     <Col order={1} span={8}>
-                        <Card title="Sign in">
+                        <Card title={<Title text="Sign in" />}>
                             <SignInForm
                                 handleConnect={this.handleConnect}
                             />
@@ -352,7 +354,7 @@ export default class App extends Component {
                         <h2>or</h2>
                     </Col>
                     <Col order={3} span={8}>
-                        <Card title="Sign up">
+                        <Card title={<Title text="Sign out" />}>
                             <SignUpForm
                                 handleSignUp={this.handleSignUp}
                             />

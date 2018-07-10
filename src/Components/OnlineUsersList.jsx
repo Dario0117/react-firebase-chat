@@ -1,15 +1,16 @@
 import React from 'react';
+import { Badge } from 'antd';
 
 function OnlineUsersList(props) {
     return (
         <div>
-            <ul>
+            <ul style={{ padding: '0' }}>
                 {props.users.map(user => {
-                    let status = 'offline';
+                    let status = <Badge status="default" />;
                     if (user.status) {
-                        status = 'online';
+                        status = <Badge status="success" />;
                     }
-                    return <li key={user.key} >{status} {user.name}</li>
+                    return <li key={user.key} style={{ listStyleType: 'none' }}>{status}<b>{user.name}</b></li>
                 })}
             </ul>
         </div>
