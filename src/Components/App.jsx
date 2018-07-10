@@ -235,11 +235,16 @@ export default class App extends Component {
             let url = '';
             switch (input.attachmentType) {
                 case ATTACHMENT_TYPE_IMAGE: {
-                    url = await this.uploadContent({
-                        name: msgRef.key,
-                        content: input.attachment.full,
-                        type: input.attachmentType,
-                    });
+                    try {
+                        url = await this.uploadContent({
+                            name: msgRef.key,
+                            content: input.attachment.full,
+                            type: input.attachmentType,
+                        });
+                    } catch (error) {
+                        console.log(error);
+                        return;
+                    }
                     let img = new AttachmentImage();
                     img.full = url;
                     img.thumbnail = url;
@@ -251,11 +256,16 @@ export default class App extends Component {
                     break;
                 }
                 case ATTACHMENT_TYPE_VIDEO: {
-                    url = await this.uploadContent({
-                        name: msgRef.key,
-                        content: input.attachment,
-                        type: input.attachmentType,
-                    });
+                    try {
+                        url = await this.uploadContent({
+                            name: msgRef.key,
+                            content: input.attachment,
+                            type: input.attachmentType,
+                        });
+                    } catch (error) {
+                        console.log(error);
+                        return;
+                    }
                     let vid = new AttachmentVideo();
                     vid.name = input.attachment.name;
                     vid.source = url;
@@ -283,7 +293,8 @@ export default class App extends Component {
                                 fileRef.getDownloadURL()
                                     .then(resolve)
                                     .catch(reject)
-                            });
+                            })
+                            .catch(reject);
                         break;
                     }
                     case ATTACHMENT_TYPE_VIDEO: {
@@ -293,6 +304,7 @@ export default class App extends Component {
                                     .then(resolve)
                                     .catch(reject)
                             })
+                            .catch(reject);
                         break;
                     }
                     default: {

@@ -10,6 +10,7 @@ export default class VidCard extends Component {
     setModal = (modal) => {
         this.setState({ modal });
     }
+
     render() {
         let vid = this.props.vid;
         if (vid.source) {
@@ -20,12 +21,13 @@ export default class VidCard extends Component {
                         title="Video"
                         wrapClassName="vertical-center-modal"
                         visible={this.state.modal}
-                        onOk={() => this.setModal(false)}
                         onCancel={() => this.setModal(false)}
                         footer={null}
                         width={760}
                     >
-                        <video src={vid.source} type="video/mp4" width="720" controls />
+                        <center>
+                            <video src={vid.source} type="video/mp4" width="720" controls />
+                        </center>
                     </Modal>
                 </div>
             );
