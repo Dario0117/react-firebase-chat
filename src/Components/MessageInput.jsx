@@ -13,6 +13,7 @@ import {
     ATTACHMENT_TYPE_LINK,
     ATTACHMENT_TYPE_VIDEO,
 } from '../DataStructures/Constants';
+import resizeImage from 'resize-image';
 
 export default class MessageInput extends Component {
     constructor(props) {
@@ -66,11 +67,16 @@ export default class MessageInput extends Component {
     addImgAttachment(img64) {
         let img = new AttachmentImage();
         img.full = img64;
-        img.thumbnail = img64;
-        this.setState({
-            attachment: img,
-            attachmentType: ATTACHMENT_TYPE_IMAGE,
-        });
+        let i = new window.Image();
+        i.onload = () => {
+            let data = resizeImage.resize(i, 100, 100, resizeImage.PNG);
+            img.thumbnail = data;
+            this.setState({
+                attachment: img,
+                attachmentType: ATTACHMENT_TYPE_IMAGE,
+            });
+        };
+        i.src = img64;
     }
 
     addVidAttachment(video) {

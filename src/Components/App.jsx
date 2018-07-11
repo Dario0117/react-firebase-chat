@@ -238,7 +238,7 @@ export default class App extends Component {
                     try {
                         url = await this.uploadContent({
                             name: msgRef.key,
-                            content: input.attachment.full,
+                            content: input.attachment,
                             type: input.attachmentType,
                         });
                     } catch (error) {
@@ -246,8 +246,8 @@ export default class App extends Component {
                         return;
                     }
                     let img = new AttachmentImage();
-                    img.full = url;
-                    img.thumbnail = url;
+                    img.full = url.full;
+                    img.thumbnail = url.thumbnail;
                     msg.addImage(img);
                     break;
                 }
@@ -288,13 +288,28 @@ export default class App extends Component {
                     .child(file.name);
                 switch (file.type) {
                     case ATTACHMENT_TYPE_IMAGE: {
-                        fileRef.putString(file.content, 'data_url')
-                            .then(() => {
-                                fileRef.getDownloadURL()
-                                    .then(resolve)
-                                    .catch(reject)
-                            })
-                            .catch(reject);
+                        let fullRef = this.storage
+                            .ref(`${this.CHATROOMS}/${this.state.roomName}/${file.type}`)
+                            .child(`${file.name}.full`);
+
+                        let thumbRef = this.storage
+                            .ref(`${this.CHATROOMS}/${this.state.roomName}/${file.type}`)
+                            .child(`${file.name}.thumb`);
+
+                        Promise.all([
+                            fullRef.putString(file.content.full, 'data_url'),
+                            thumbRef.putString(file.content.thumbnail, 'data_url'),
+                        ]).then(() => {
+                            Promise.all([
+                                fullRef.getDownloadURL(),
+                                thumbRef.getDownloadURL(),
+                            ]).then((urls) => {
+                                resolve({
+                                    full: urls[0],
+                                    thumbnail: urls[1],
+                                });
+                            }).catch(reject);
+                        }).catch(reject);
                         break;
                     }
                     case ATTACHMENT_TYPE_VIDEO: {
