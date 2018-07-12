@@ -43,15 +43,15 @@ export default class App extends Component {
         this.auth = null;
 
         this.messagesRef = null;
-        this.userOnRoomRef = null;
+        this.onRoomRef = null;
 
         this.lastTimeMouseMove = moment().valueOf();
 
         this.state = {
             chatMessages: [],
-            roomName: '',
+            roomName: localStorage.getItem('roomName') || '',
             username: '',
-            isConnected: false,
+            isConnected: (localStorage.getItem('roomName') && localStorage.getItem('roomName').length > 0),
             users: [],
         };
 
@@ -61,7 +61,6 @@ export default class App extends Component {
         this.uploadContent = this.uploadContent.bind(this);
         this.handleSignUp = this.handleSignUp.bind(this);
         this.fetchMessages = this.fetchMessages.bind(this);
-        this.listenNewMessages = this.listenNewMessages.bind(this);
         this.updateOnlineStatus = this.updateOnlineStatus.bind(this);
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.updateOnlineUsers = this.updateOnlineUsers.bind(this);
@@ -113,18 +112,14 @@ export default class App extends Component {
         });
     }
 
-    fetchMessages(user, roomName) {
+    fetchMessages(username, roomName) {
         this.messagesRef = this.database
             .ref(`${this.CHATROOMS}/${roomName}/${this.MESSAGES}`);
         this.setState({
             roomName,
-            username: user.val().name,
+            username,
             isConnected: true,
         });
-        this.listenNewMessages();
-    }
-
-    listenNewMessages() {
         this.messagesRef
             .on('child_added', snap => {
                 let newMessage = this.getMessageFromSnap(snap);
@@ -132,33 +127,27 @@ export default class App extends Component {
                 this.setState({
                     chatMessages,
                 });
-            })
+            });
     }
 
     handleSignUp({ email, password, name, roomName }) {
         return new Promise((resolve, reject) => {
             this.auth.createUserWithEmailAndPassword(email, password)
                 .then(() => {
-                    let { uid, email } = this.auth.currentUser;
-                    this.database
-                        .ref(`${this.USERS}/${uid}`)
-                        .set({
-                            email,
-                            name,
-                        });
-                    this.handleConnect({
-                        roomName,
-                        password,
-                        email,
-                    });
-                    resolve();
+                    localStorage.setItem('roomName', roomName);
+                    localStorage.setItem('username', name);
+                    this.auth.currentUser.updateProfile({
+                        displayName: name,
+                    })
+                    .then(resolve)
+                    .catch(reject);
                 })
                 .catch(reject)
         });
     }
 
     updateOnlineStatus() {
-        this.userOnRoomRef
+        this.onRoomRef
             .set({
                 time: moment().valueOf(),
                 username: this.state.username,
@@ -191,19 +180,9 @@ export default class App extends Component {
         return new Promise((resolve, reject) => {
             this.auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
-                    let { uid } = this.auth.currentUser;
-                    this.database
-                        .ref(`${this.USERS}/${uid}`)
-                        .once('value', user => this.fetchMessages(user, roomName));
-
-                    this.userOnRoomRef = this.database
-                        .ref(`${this.CHATROOMS}/${roomName}/${this.USERS}/${uid}`);
-
-                    this.database
-                        .ref(`${this.CHATROOMS}/${roomName}/${this.USERS}`)
-                        .on('value', this.updateOnlineUsers);
-
-                    this.updateOnlineStatus();
+                    let { displayName } = this.auth.currentUser;
+                    localStorage.setItem('roomName', roomName);
+                    localStorage.setItem('username', displayName);
                     resolve();
                 })
                 .catch(reject);
@@ -216,8 +195,10 @@ export default class App extends Component {
             .off();
         this.auth.signOut();
         this.setState({
-            isConnected: false,
             chatMessages: [],
+            roomName: '',
+            username: '',
+            isConnected: false,
             users: [],
         });
     }
@@ -335,6 +316,23 @@ export default class App extends Component {
         this.database = firebase.database();
         this.storage = firebase.storage();
         this.auth = firebase.auth();
+        this.auth.onAuthStateChanged(user => {
+            if (user) {
+                let roomName = localStorage.getItem('roomName');
+                let username = localStorage.getItem('username');
+                let uid = user.uid;
+                this.fetchMessages(username, roomName);
+                this.onRoomRef = this.database
+                    .ref(`${this.CHATROOMS}/${roomName}/${this.USERS}/${uid}`);
+                this.database
+                    .ref(`${this.CHATROOMS}/${roomName}/${this.USERS}`)
+                    .on('value', this.updateOnlineUsers);
+                this.updateOnlineStatus();
+            } else {
+                localStorage.setItem('username', '');
+                localStorage.setItem('roomName', '');
+            }
+        });
     }
 
     handleMouseMove() {
