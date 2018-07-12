@@ -15,7 +15,7 @@ import {
 } from '../DataStructures/Constants';
 import resizeImage from 'resize-image';
 
-import { Row, Col, Input } from 'antd';
+import { Row, Col, Input, Button } from 'antd';
 
 const { TextArea } = Input;
 
@@ -29,6 +29,7 @@ export default class MessageInput extends Component {
             attachmentType: '',
         };
         this.showUrlCard = true;
+        this.fileChooserElement = null;
 
         this.addUrlAttachment = this.addUrlAttachment.bind(this);
         this.addImgAttachment = this.addImgAttachment.bind(this);
@@ -37,6 +38,7 @@ export default class MessageInput extends Component {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleInputPaste = this.handleInputPaste.bind(this);
         this.handleSendMessage = this.handleSendMessage.bind(this);
+        this.handleFileChooserButton = this.handleFileChooserButton.bind(this);
     }
 
     async getMetaFromURL(url) {
@@ -88,6 +90,10 @@ export default class MessageInput extends Component {
             attachment: video,
             attachmentType: ATTACHMENT_TYPE_VIDEO,
         });
+    }
+
+    handleFileChooserButton() {
+        this.fileChooserElement.click();
     }
 
     handleFileChooser(e) {
@@ -173,36 +179,49 @@ export default class MessageInput extends Component {
         }
         return (
             <div>
-                <Row>
-                    <Col span={18}>
+                <Row gutter={2}>
+                    <Col span={17}>
                         <TextArea
                             id="message"
                             value={this.state.message}
                             placeholder="Type your message..."
-                            style={{ resize: 'none'}}
+                            style={{ resize: 'none' }}
                             autosize={{ minRows: 1, maxRows: 2 }}
                             onChange={this.handleInputChange}
                             onPaste={this.handleInputPaste}
                             onPressEnter={this.handleSendMessage}
                         />
                     </Col>
-                    <Col span={6}>
-                        <input
-                            type="button"
-                            value="Send"
+                    <Col span={5}>
+                        <Button
+                            type="primary"
+                            icon="enter"
+                            style={{ width: '100%' }}
                             onClick={this.handleSendMessage}
+                        >
+                            Send
+                        </Button>
+                    </Col>
+                    <Col span={2}>
+                        <Button
+                            type="primary"
+                            icon="upload"
+                            style={{ width: '100%' }}
+                            onClick={this.handleFileChooserButton}
                         />
                         <input
                             type="file"
                             id="attachment"
+                            style={{ display: 'none' }}
+                            ref={input => this.fileChooserElement = input}
                             onChange={this.handleFileChooser}
                             accept="image/*, video/mp4"
                         />
                     </Col>
                 </Row>
-                <br />
-                {card}
-            </div>
+            <br />
+                { card }
+            </div >
         );
     }
 }
