@@ -17,11 +17,9 @@ function ChatBox(props) {
                 </Col>
                 <Col span={8}>
                     <Card title={<Title text="Users on this room" />} style={{ width: '250px' }}>
-                        <OnlineUsersList users={props.users} />
-                        <input
-                            type="button"
-                            value="Disconnect"
-                            onClick={props.handleDisconnect}
+                        <OnlineUsersList
+                            users={props.users}
+                            handleDisconnect={props.handleDisconnect}
                         />
                     </Card>
                 </Col>

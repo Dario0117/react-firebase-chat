@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from 'antd';
+import { Badge, Button } from 'antd';
 
 function OnlineUsersList(props) {
     return (
@@ -13,6 +13,14 @@ function OnlineUsersList(props) {
                     return <li key={user.key} style={{ listStyleType: 'none' }}>{status}<b>{user.name}</b></li>
                 })}
             </ul>
+            <center>
+                <Button
+                    onClick={props.handleDisconnect}
+                    type="danger"
+                >
+                    Disconnect
+                </Button>
+            </center>
         </div>
     )
 }

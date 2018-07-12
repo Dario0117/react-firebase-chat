@@ -18,7 +18,6 @@ export default class VidCard extends Component {
                 <div>
                     <video onClick={() => this.setModal(true)} src={vid.source} width="220" type="video/mp4" />
                     <Modal
-                        title="Video"
                         wrapClassName="vertical-center-modal"
                         visible={this.state.modal}
                         onCancel={() => this.setModal(false)}

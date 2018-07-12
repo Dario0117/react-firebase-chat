@@ -16,7 +16,6 @@ export default class ImgCard extends Component {
             <div>
                 <img onClick={() => this.setModal(true)} src={image.thumbnail} alt="" />
                 <Modal
-                    title="Image"
                     wrapClassName="vertical-center-modal"
                     visible={this.state.modal}
                     onCancel={() => this.setModal(false)}
@@ -24,7 +23,8 @@ export default class ImgCard extends Component {
                     width={760}
                 >
                     <center>
-                        <img src={image.full} alt="" />
+                        <img src={image.full} style={{ width: '100%' }} alt="" />
+                        <a href={image.full} target="_blank">View full image</a>
                     </center>
                 </Modal>
             </div>

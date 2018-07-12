@@ -15,6 +15,10 @@ import {
 } from '../DataStructures/Constants';
 import resizeImage from 'resize-image';
 
+import { Row, Col, Input } from 'antd';
+
+const { TextArea } = Input;
+
 export default class MessageInput extends Component {
     constructor(props) {
         super(props);
@@ -169,24 +173,33 @@ export default class MessageInput extends Component {
         }
         return (
             <div>
-                <input
-                    type="text"
-                    id="message"
-                    value={this.state.message}
-                    onChange={this.handleInputChange}
-                    onPaste={this.handleInputPaste}
-                    placeholder="Type your message..." />
-                <input
-                    type="button"
-                    value="Send"
-                    onClick={this.handleSendMessage}
-                />
-                <input
-                    type="file"
-                    id="attachment"
-                    onChange={this.handleFileChooser}
-                    accept="image/*, video/mp4"
-                />
+                <Row>
+                    <Col span={18}>
+                        <TextArea
+                            id="message"
+                            value={this.state.message}
+                            placeholder="Type your message..."
+                            style={{ resize: 'none'}}
+                            autosize={{ minRows: 1, maxRows: 2 }}
+                            onChange={this.handleInputChange}
+                            onPaste={this.handleInputPaste}
+                            onPressEnter={this.handleSendMessage}
+                        />
+                    </Col>
+                    <Col span={6}>
+                        <input
+                            type="button"
+                            value="Send"
+                            onClick={this.handleSendMessage}
+                        />
+                        <input
+                            type="file"
+                            id="attachment"
+                            onChange={this.handleFileChooser}
+                            accept="image/*, video/mp4"
+                        />
+                    </Col>
+                </Row>
                 <br />
                 {card}
             </div>
