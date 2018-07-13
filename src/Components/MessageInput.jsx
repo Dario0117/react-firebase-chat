@@ -181,6 +181,7 @@ export default class MessageInput extends Component {
         }
         return (
             <div>
+                { card }
                 <Row gutter={2}>
                     <Col span={17}>
                         <TextArea
@@ -223,8 +224,6 @@ export default class MessageInput extends Component {
                         />
                     </Col>
                 </Row>
-            <br />
-                { card }
             </div >
         );
     }

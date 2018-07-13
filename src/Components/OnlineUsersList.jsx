@@ -7,10 +7,12 @@ function OnlineUsersList(props) {
             <ul style={{ padding: '0' }}>
                 {props.users.map(user => {
                     let status = <Badge status="default" />;
+                    let color = 'grey';
                     if (user.status) {
                         status = <Badge status="success" />;
+                        color = 'black';
                     }
-                    return <li key={user.key} style={{ listStyleType: 'none' }}>{status}<b>{user.name}</b></li>
+                    return <li key={user.key} style={{ listStyleType: 'none', color }}>{status}<b>{user.name}</b></li>
                 })}
             </ul>
             <center>

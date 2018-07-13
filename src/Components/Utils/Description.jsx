@@ -3,8 +3,19 @@ import React from 'react';
 function Description(props) {
     return (
         <div>
-            <p>{props.host}</p>
-            <p>{props.description}</p>
+            <span>{props.host}</span>
+            <br />
+            <span style={{
+                overflow: 'hidden',
+                WebkitLineClamp: '2',
+                width: '100%',
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                color: 'black'
+            }}
+            >
+                {props.description}
+            </span>
         </div>
     );
 }

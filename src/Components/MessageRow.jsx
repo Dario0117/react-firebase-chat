@@ -17,8 +17,10 @@ function ChatMessage(props) {
     }
     return (
         <div>
-            <span><strong>{props.msg.username}</strong></span>:
-            <span> {props.msg.message}</span>
+            <div style={{ color: 'black' }}>
+                <span><strong>{props.msg.username}</strong></span>:
+                <span> {props.msg.message}</span>
+            </div>
             {card}
         </div>
     );
