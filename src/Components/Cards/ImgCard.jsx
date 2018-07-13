@@ -12,6 +12,10 @@ export default class ImgCard extends Component {
 
     render() {
         let image = this.props.img;
+        let fullImage = '';
+        if(image.full.startsWith('http')) {
+            fullImage = <a href={image.full} target="_blank">View full image</a>;
+        }
         return (
             <div>
                 <img onClick={() => this.setModal(true)} src={image.thumbnail} alt="" />
@@ -24,7 +28,7 @@ export default class ImgCard extends Component {
                 >
                     <center>
                         <img src={image.full} style={{ width: '100%' }} alt="" />
-                        <a href={image.full} target="_blank">View full image</a>
+                        {fullImage}
                     </center>
                 </Modal>
             </div>

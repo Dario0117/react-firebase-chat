@@ -19,14 +19,12 @@ export default class MessageList extends Component {
     }
     render() {
         return (
-            <div>
-                <div style={{ overflowY: 'auto', overflowX: 'hidden', height: '550px', width: '450px' }}>
-                    {this.props.messageList.map(msg => (
-                        <MessageRow key={msg.id} msg={msg} />
-                    ))}
-                    <div style={{ float: "left", clear: "both" }}
-                        ref={(el) => { this.messagesEnd = el; }}>
-                    </div>
+            <div style={{ overflowY: 'auto', overflowX: 'hidden', height: '550px', width: '450px' }}>
+                {this.props.messageList.map(msg => (
+                    <MessageRow key={msg.id} msg={msg} />
+                ))}
+                <div style={{ float: "left", clear: "both" }}
+                    ref={(el) => { this.messagesEnd = el; }}>
                 </div>
             </div>
         );
