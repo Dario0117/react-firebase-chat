@@ -198,6 +198,7 @@ export default class MessageInput extends Component {
                             icon="enter"
                             style={{ width: '100%' }}
                             onClick={this.handleSendMessage}
+                            ghost
                         >
                             Send
                         </Button>
@@ -208,6 +209,7 @@ export default class MessageInput extends Component {
                             icon="upload"
                             style={{ width: '100%' }}
                             onClick={this.handleFileChooserButton}
+                            ghost
                         />
                         <input
                             type="file"

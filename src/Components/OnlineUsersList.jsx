@@ -17,6 +17,7 @@ function OnlineUsersList(props) {
                 <Button
                     onClick={props.handleDisconnect}
                     type="danger"
+                    ghost
                 >
                     Disconnect
                 </Button>
