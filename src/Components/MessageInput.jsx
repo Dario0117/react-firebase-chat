@@ -99,7 +99,7 @@ export default class MessageInput extends Component {
 
     handleFileChooser(e) {
         let files = e.target.files;
-        if (files) {
+        if (files.length > 0) {
             if (files[0].type.indexOf('image') !== -1) {
                 FileChooser.imageAsBase64(e.target.files[0])
                     .then(this.addImgAttachment);
