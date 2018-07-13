@@ -369,7 +369,7 @@ export default class App extends Component {
                     align="middle"
                 >
                     <Col order={1} span={8}>
-                        <Card title={<Title text="Sign in" />}>
+                        <Card title={<Title text="Login" />}>
                             <SignInForm
                                 handleConnect={this.handleConnect}
                             />
@@ -379,7 +379,7 @@ export default class App extends Component {
                         <h2>or</h2>
                     </Col>
                     <Col order={3} span={8}>
-                        <Card title={<Title text="Sign out" />}>
+                        <Card title={<Title text="Register and login" />}>
                             <SignUpForm
                                 handleSignUp={this.handleSignUp}
                             />

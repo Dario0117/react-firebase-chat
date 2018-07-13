@@ -46,7 +46,7 @@ class ConnectForm extends Component {
                     )}
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" htmlType="submit" className="login-form-button">
+                    <Button type="primary" icon="login" htmlType="submit" className="login-form-button">
                         Log in
                 </Button>
                 </FormItem>

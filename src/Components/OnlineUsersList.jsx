@@ -19,9 +19,10 @@ function OnlineUsersList(props) {
                 <Button
                     onClick={props.handleDisconnect}
                     type="danger"
+                    icon="logout"
                     ghost
                 >
-                    Disconnect
+                    Logout
                 </Button>
             </center>
         </div>
