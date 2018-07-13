@@ -28,6 +28,7 @@ export default class MessageInput extends Component {
             attachment: '',
             attachmentType: '',
         };
+        // flag for avoid re-render card on multiple times link detected 
         this.showUrlCard = true;
         this.fileChooserElement = null;
 
@@ -139,7 +140,7 @@ export default class MessageInput extends Component {
 
     handleInputPaste(e) {
         let value = e.clipboardData.getData('Text');
-        if (e.clipboardData.items[0].type === 'text/plain') {
+        if (value) {
             this.addUrlAttachment(value);
         } else {
             Clipboard.imageASBase64(e, this.addImgAttachment);
@@ -150,6 +151,7 @@ export default class MessageInput extends Component {
         e.preventDefault();
         if (this.state.message || this.state.attachmentType) {
             this.props.handleSendMessage(this.state);
+            this.showUrlCard = true;
             this.setState({
                 message: '',
                 attachment: '',
