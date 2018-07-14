@@ -162,6 +162,7 @@ export default class MessageInput extends Component {
 
     render() {
         let card = '';
+        let hidden = false;
         switch (this.state.attachmentType) {
             case ATTACHMENT_TYPE_IMAGE: {
                 card = <ImgCard img={this.state.attachment} />
@@ -176,55 +177,59 @@ export default class MessageInput extends Component {
                 break;
             }
             default: {
+                hidden = true;
                 break;
             }
         }
+        let wrapper = <div style={{ hidden }}>{card}</div>;
         return (
-            <div>
-                { card }
-                <Row gutter={2}>
-                    <Col span={17}>
-                        <TextArea
-                            id="message"
-                            value={this.state.message}
-                            placeholder="Type your message..."
-                            style={{ resize: 'none' }}
-                            autosize={{ minRows: 1, maxRows: 2 }}
-                            onChange={this.handleInputChange}
-                            onPaste={this.handleInputPaste}
-                            onPressEnter={this.handleSendMessage}
-                        />
-                    </Col>
-                    <Col span={5}>
-                        <Button
-                            type="primary"
-                            icon="enter"
-                            style={{ width: '100%' }}
-                            onClick={this.handleSendMessage}
-                            ghost
-                        >
-                            Send
+            <React.Fragment>
+                {wrapper}
+                <div>
+                    <Row gutter={2}>
+                        <Col span={17}>
+                            <TextArea
+                                id="message"
+                                value={this.state.message}
+                                placeholder="Type your message..."
+                                style={{ resize: 'none' }}
+                                autosize={{ minRows: 1, maxRows: 2 }}
+                                onChange={this.handleInputChange}
+                                onPaste={this.handleInputPaste}
+                                onPressEnter={this.handleSendMessage}
+                            />
+                        </Col>
+                        <Col span={5}>
+                            <Button
+                                type="primary"
+                                icon="enter"
+                                style={{ width: '100%' }}
+                                onClick={this.handleSendMessage}
+                                ghost
+                            >
+                                Send
                         </Button>
-                    </Col>
-                    <Col span={2}>
-                        <Button
-                            type="primary"
-                            icon="upload"
-                            style={{ width: '100%' }}
-                            onClick={this.handleFileChooserButton}
-                            ghost
-                        />
-                        <input
-                            type="file"
-                            id="attachment"
-                            style={{ display: 'none' }}
-                            ref={input => this.fileChooserElement = input}
-                            onChange={this.handleFileChooser}
-                            accept="image/*, video/mp4"
-                        />
-                    </Col>
-                </Row>
-            </div >
+                        </Col>
+                        <Col span={2}>
+                            <Button
+                                type="primary"
+                                icon="upload"
+                                style={{ width: '100%' }}
+                                onClick={this.handleFileChooserButton}
+                                ghost
+                            />
+                            <input
+                                type="file"
+                                id="attachment"
+                                style={{ display: 'none' }}
+                                ref={input => this.fileChooserElement = input}
+                                onChange={this.handleFileChooser}
+                                accept="image/*, video/mp4"
+                            />
+                        </Col>
+                    </Row>
+                </div >
+            </React.Fragment>
         );
     }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import MessageRow from './MessageRow';
+import './MessageList.css';
 
 
 export default class MessageList extends Component {
@@ -19,7 +20,7 @@ export default class MessageList extends Component {
     }
     render() {
         return (
-            <div style={{ overflowY: 'auto', overflowX: 'hidden', height: '550px', width: '450px' }}>
+            <div className="msg-list">
                 {this.props.messageList.map(msg => (
                     <MessageRow key={msg.id} msg={msg} />
                 ))}

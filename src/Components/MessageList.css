@@ -1,0 +1,6 @@
+.msg-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 300px;
+    width: 450px;
+}

@@ -21,7 +21,8 @@ function UrlCard(props) {
             onClick={() => {
                 let win = window.open(link.url, '_blank');
                 win.focus();
-            }}>
+            }}
+        >
             <Col span={8} >
                 <img style={{ maxHeight: '80px' }} alt="" src={link.image} />
             </Col>

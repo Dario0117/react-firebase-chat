@@ -7,24 +7,27 @@ import { Row, Col, Card } from 'antd';
 
 function ChatBox(props) {
     return (
-        <section name="chat-box">
-            <Row gutter={20}>
-                <Col span={16}>
-                    <Card title={<Title text="Chat" />} style={{ height: '700px', width: '500px' }}>
-                        <MessageList messageList={props.messageList} />
-                        <MessageInput handleSendMessage={props.handleSendMessage} />
-                    </Card>
-                </Col>
-                <Col span={8}>
-                    <Card title={<Title text="Users on this room" />} style={{ width: '250px' }}>
-                        <OnlineUsersList
-                            users={props.users}
-                            handleDisconnect={props.handleDisconnect}
-                        />
-                    </Card>
-                </Col>
-            </Row>
-        </section>
+        <Row gutter={20}>
+            <Col span={16}>
+                <Card
+                    title={<Title text="Chat" />}
+                    style={{
+                        width: '500px',
+                    }}
+                >
+                    <MessageList messageList={props.messageList} />
+                    <MessageInput handleSendMessage={props.handleSendMessage} />
+                </Card>
+            </Col>
+            <Col span={8}>
+                <Card title={<Title text="Users on this room" />} style={{ width: '250px' }}>
+                    <OnlineUsersList
+                        users={props.users}
+                        handleDisconnect={props.handleDisconnect}
+                    />
+                </Card>
+            </Col>
+        </Row>
     );
 }
 
