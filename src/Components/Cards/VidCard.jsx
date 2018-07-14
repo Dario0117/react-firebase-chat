@@ -25,7 +25,7 @@ export default class VidCard extends Component {
                         <video
                             src={vid.source}
                             type="video/mp4"
-                            style={{ width: '220px' }}
+                            style={{ width: '220px', cursor: 'pointer' }}
                         />
                         <Icon
                             type="play-circle-o"
