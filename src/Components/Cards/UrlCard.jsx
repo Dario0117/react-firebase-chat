@@ -33,7 +33,7 @@ function UrlCard(props) {
                             fontWeight: 'bold',
                             overflow: 'hidden',
                             WebkitLineClamp: '1',
-                            width: '100%',
+                            width: '90%',
                             display: '-webkit-box',
                             WebkitBoxOrient: 'vertical',
                             color: 'black'

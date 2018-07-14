@@ -15,7 +15,7 @@ import {
 } from '../DataStructures/Constants';
 import resizeImage from 'resize-image';
 
-import { Row, Col, Input, Button } from 'antd';
+import { Row, Col, Input, Button, Icon } from 'antd';
 
 const { TextArea } = Input;
 
@@ -40,6 +40,7 @@ export default class MessageInput extends Component {
         this.handleInputPaste = this.handleInputPaste.bind(this);
         this.handleSendMessage = this.handleSendMessage.bind(this);
         this.handleFileChooserButton = this.handleFileChooserButton.bind(this);
+        this.handleRemoveAttachment = this.handleRemoveAttachment.bind(this);
     }
 
     async getMetaFromURL(url) {
@@ -160,9 +161,18 @@ export default class MessageInput extends Component {
         }
     }
 
+    handleRemoveAttachment(e) {
+        e.preventDefault();
+        this.showUrlCard = true;
+        this.setState({
+            attachment: '',
+            attachmentType: '',
+        })
+    }
+
     render() {
         let card = '';
-        let hidden = false;
+        let display = 'block';
         switch (this.state.attachmentType) {
             case ATTACHMENT_TYPE_IMAGE: {
                 card = <ImgCard img={this.state.attachment} />
@@ -177,11 +187,31 @@ export default class MessageInput extends Component {
                 break;
             }
             default: {
-                hidden = true;
+                display = 'none';
                 break;
             }
         }
-        let wrapper = <div style={{ hidden }}>{card}</div>;
+        let wrapper = (
+            <div
+                style={{
+                    display,
+                    position: 'relative',
+                }}
+            >
+                {card}
+                <Icon
+                    type="close-square"
+                    onClick={this.handleRemoveAttachment}
+                    style={{
+                        fontSize: 20,
+                        position: 'absolute',
+                        cursor: 'pointer',
+                        top: '5%',
+                        left: '95%',
+                    }}
+                />
+            </div>
+        );
         return (
             <React.Fragment>
                 {wrapper}
