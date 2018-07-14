@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import icon from './assets/videoIcon.svg';
-import { Modal } from 'antd';
+import { Modal, Icon } from 'antd';
 
 export default class VidCard extends Component {
     state = {
@@ -16,7 +16,30 @@ export default class VidCard extends Component {
         if (vid.source) {
             return (
                 <div>
-                    <video onClick={() => this.setModal(true)} src={vid.source} width="220" type="video/mp4" />
+                    <div 
+                    onClick={() => this.setModal(true)} 
+                    style={{
+                        position: 'relative',
+                    }}
+                    >
+                        <video
+                            src={vid.source}
+                            type="video/mp4"
+                            style={{
+                                width: '220px',
+                            }}
+                        />
+                        <Icon
+                            type="play-circle-o"
+                            style={{
+                                fontSize: 50,
+                                position: 'absolute',
+                                top: '30%',
+                                left: '80px',
+                                color: 'white',
+                            }}
+                        />
+                    </div>
                     <Modal
                         wrapClassName="vertical-center-modal"
                         visible={this.state.modal}
