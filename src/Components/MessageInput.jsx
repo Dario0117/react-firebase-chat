@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import resizeImage from 'resize-image';
+import { Row, Col, Input, Button, Icon } from 'antd';
+
 import UrlFromInput from '../Utils/UrlFromInput';
 import UrlCard from './Cards/UrlCard';
 import ImgCard from './Cards/ImgCard';
 import VidCard from './Cards/VidCard';
+import Loading from './Cards/Loading';
 import UrlMeta from '../Utils/UrlMeta';
 import Clipboard from '../Utils/ImgFromClipboard';
 import FileChooser from '../Utils/ImgFromFile';
@@ -13,9 +17,7 @@ import {
     ATTACHMENT_TYPE_LINK,
     ATTACHMENT_TYPE_VIDEO,
 } from '../DataStructures/Constants';
-import resizeImage from 'resize-image';
-
-import { Row, Col, Input, Button, Icon } from 'antd';
+import './MessageInput.css';
 
 const { TextArea } = Input;
 
@@ -27,6 +29,7 @@ export default class MessageInput extends Component {
             message: '',
             attachment: '',
             attachmentType: '',
+            loadingCard: false,
         };
         // flag for avoid re-render card on multiple times link detected 
         this.showUrlCard = true;
@@ -56,6 +59,9 @@ export default class MessageInput extends Component {
     addUrlAttachment(value) {
         let url = UrlFromInput(value);
         if (url && this.showUrlCard) {
+            this.setState({
+                loadingCard: true,
+            });
             this.getMetaFromURL(url)
                 .then(meta => {
                     let link = new AttachmentLink();
@@ -66,6 +72,7 @@ export default class MessageInput extends Component {
                     this.setState({
                         attachment: link,
                         attachmentType: ATTACHMENT_TYPE_LINK,
+                        loadingCard: false,
                     })
                     this.showUrlCard = false;
                 });
@@ -133,6 +140,7 @@ export default class MessageInput extends Component {
         if (!value) {
             newState.attachment = '';
             newState.attachmentType = '';
+            newState.loadingCard = false;
             this.showUrlCard = true;
         }
 
@@ -157,6 +165,7 @@ export default class MessageInput extends Component {
                 message: '',
                 attachment: '',
                 attachmentType: '',
+                loadingCard: false,
             });
         }
     }
@@ -167,6 +176,7 @@ export default class MessageInput extends Component {
         this.setState({
             attachment: '',
             attachmentType: '',
+            loadingCard: false,
         })
     }
 
@@ -191,6 +201,23 @@ export default class MessageInput extends Component {
                 break;
             }
         }
+
+        if (this.state.loadingCard) {
+            display = 'block';
+            card = <Loading />;
+        } 
+
+        let icon = '';
+        if (!this.state.loadingCard) {
+            icon = (
+                <Icon
+                    type="close-square"
+                    onClick={this.handleRemoveAttachment}
+                    className="card-close-icon"
+                />
+            )
+        }
+
         let wrapper = (
             <div
                 style={{
@@ -199,17 +226,7 @@ export default class MessageInput extends Component {
                 }}
             >
                 {card}
-                <Icon
-                    type="close-square"
-                    onClick={this.handleRemoveAttachment}
-                    style={{
-                        fontSize: 20,
-                        position: 'absolute',
-                        cursor: 'pointer',
-                        top: '5%',
-                        left: '95%',
-                    }}
-                />
+                {icon}
             </div>
         );
         return (

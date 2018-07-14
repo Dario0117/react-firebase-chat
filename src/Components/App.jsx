@@ -4,6 +4,14 @@ import 'firebase/database';
 import 'firebase/storage';
 import 'firebase/auth';
 import moment from 'moment';
+import {
+    Layout,
+    Icon,
+    Row,
+    Col,
+    Card,
+} from 'antd';
+
 import firebaseConfig from '../firebase-config';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
@@ -17,16 +25,8 @@ import {
     ATTACHMENT_TYPE_LINK,
     ATTACHMENT_TYPE_VIDEO,
 } from '../DataStructures/Constants';
-
 import Title from './Utils/Title';
-
-import {
-    Layout,
-    Icon,
-    Row,
-    Col,
-    Card,
-} from 'antd';
+import './App.css';
 
 const { Header, Footer, Content } = Layout;
 
@@ -139,8 +139,8 @@ export default class App extends Component {
                     this.auth.currentUser.updateProfile({
                         displayName: name,
                     })
-                    .then(resolve)
-                    .catch(reject);
+                        .then(resolve)
+                        .catch(reject);
                 })
                 .catch(reject)
         });
@@ -390,21 +390,11 @@ export default class App extends Component {
         }
 
         return (
-            <Layout
-                style={{
-                    height: '100%',
-                    width: '100%',
-                    position: 'absolute'
-                }}
-            >
+            <Layout className="app-layout">
                 <Header style={{ textAlign: 'center' }}>
                     <h1 style={{ color: '#fff' }}>React firebase chat</h1>
                 </Header>
-                <Content style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }}>
+                <Content className="app-content">
                     {content}
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>

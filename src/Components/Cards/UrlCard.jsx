@@ -1,6 +1,8 @@
 import React from 'react';
 import { Row, Col } from 'antd';
+
 import Description from '../Utils/Description';
+import './UrlCard.css';
 
 function UrlCard(props) {
     let link = props.link;
@@ -11,32 +13,23 @@ function UrlCard(props) {
     }
     return (
         <Row
-            style={{
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                borderColor: '#AEAEAE',
-                cursor: 'pointer',
-                background: '#F3F3F3'
-            }}
+            className="url-card"
             onClick={() => {
                 let win = window.open(link.url, '_blank');
                 win.focus();
             }}
         >
-            <Col span={8} >
-                <img style={{ maxHeight: '80px' }} alt="" src={link.image} />
+            <Col span={9} >
+                <img style={{ maxHeight: '100px', width: '150px' }} alt="" src={link.image} />
             </Col>
-            <Col span={16}>
+            <Col span={15}>
                 <Row>
                     <span
+                        className="url-card-title"
                         style={{
-                            fontWeight: 'bold',
-                            overflow: 'hidden',
                             WebkitLineClamp: '1',
-                            width: '90%',
                             display: '-webkit-box',
                             WebkitBoxOrient: 'vertical',
-                            color: 'black'
                         }}
                     >
                         {link.title}

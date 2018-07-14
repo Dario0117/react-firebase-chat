@@ -1,9 +1,10 @@
 import React from 'react';
+import { Row, Col, Card } from 'antd';
+
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import OnlineUsersList from './OnlineUsersList';
 import Title from './Utils/Title';
-import { Row, Col, Card } from 'antd';
 
 function ChatBox(props) {
     return (
@@ -11,11 +12,10 @@ function ChatBox(props) {
             <Col span={16}>
                 <Card
                     title={<Title text="Chat" />}
-                    style={{
-                        width: '500px',
-                    }}
+                    style={{ width: '500px' }}
                 >
                     <MessageList messageList={props.messageList} />
+                    <hr/>
                     <MessageInput handleSendMessage={props.handleSendMessage} />
                 </Card>
             </Col>

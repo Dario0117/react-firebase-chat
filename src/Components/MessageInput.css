@@ -1,0 +1,7 @@
+.card-close-icon {
+    font-size: 20px;
+    position: absolute;
+    cursor: pointer;
+    top: 5%;
+    left: 95%;
+}

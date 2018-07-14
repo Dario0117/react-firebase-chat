@@ -1,0 +1,85 @@
+.container {
+    height: 75px;
+    background: white;
+    max-width: 769px;
+}
+
+.background {
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: preloadAnimation;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    display: flex;
+	min-height: 75px;
+}
+
+@keyframes preloadAnimation{
+    0%{
+        background-position: -769px 0
+    }
+    100%{
+        background-position: 769px 0
+    }
+}
+
+.right {
+    flex: 1;
+}
+
+.image {
+    width: 150px;
+    height: 70px;
+    background: transparent;
+}
+
+.bar {
+    height: 13px;
+    background: transparent;
+    position: relative;
+    width: 100%;
+}
+
+.bar::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    width: 0.2rem;
+    height: 22px;
+    background: white;
+}
+
+.bar::after {
+    position:absolute;
+    right: 0;
+    height: 22px;
+    content: "";
+    background: white;
+}
+
+.bar.medium::after {
+    width: 50%;
+}
+
+.bar.small::after {
+    width: 75%;
+}
+
+.mask {
+    background: white;
+    width: 100%;
+}
+
+.thick {
+    height: 1.5rem;
+}
+
+.thin {
+    height: 0.5rem;
+}
+
+.min {
+    height: 0.2rem;
+}

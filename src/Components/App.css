@@ -1,0 +1,11 @@
+.app-layout {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.app-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

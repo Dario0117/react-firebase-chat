@@ -1,0 +1,14 @@
+.url-card {
+    border-width: 2px;
+    border-style: solid;
+    border-color: #AEAEAE;
+    cursor: pointer;
+    background: #F3F3F3;
+}
+
+.url-card-title {
+    font-weight: bold; 
+    overflow: hidden; 
+    width: 90%; 
+    color: black;
+}
