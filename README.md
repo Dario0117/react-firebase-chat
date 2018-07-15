@@ -1,8 +1,8 @@
-# react-firebase-chat
+# React Firebase Chat
 
-Ejercicio de práctica en ReactJs y google firebase
+> Ejercicio de práctica en ReactJs y Firebase
 
-Funcionalidades:
+## Funcionalidades:
 
 - [x] Comunicación entre usuarios
     - [x] Conectados
@@ -22,3 +22,48 @@ Funcionalidades:
     - [x] Se pueden mandar desde el selector de archivos
 - [x] Enviar videos
     - [x] Se pueden mandar desde el selector de archivos
+
+> NOTA: No se necesita confirmación de correo para el registro, sólo que el correo tenga el formato correcto
+
+### **Realtime database rules**
+```json
+{
+    "rules": {
+        "chatrooms": {
+            "$room": {
+                ".read": "auth != null",
+                "messages": {
+                    "$messageID": {
+                        ".write": "!data.exists()",
+                        ".validate": "root.child('/chatrooms/'+$room+'/users/'+auth.uid).exists() &&  newData.hasChildren(['username', 'message']) && newData.child('username').isString() && newData.child('message').isString()"
+                    }
+                },
+                "users": {
+                    "$userID": {
+                        ".write": "(!data.exists() && $userID === auth.uid) || ($userID === auth.uid)",
+                        ".validate": "newData.hasChildren(['username', 'time']) && newData.child('username').isString() && newData.child('time').isNumber()"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### **Storage rules**
+
+```
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+    match /chatrooms/{room}/img/{imgName} {
+    	allow write: if request.resource.contentType.matches('image/.*') && request.resource.contentType == resource.contentType;
+    }
+    match /chatrooms/{room}/vid/{vidName} {
+    	allow write: if request.resource.contentType.matches('video/mp4') && request.resource.contentType == resource.contentType;
+    }
+  }
+}
+```
