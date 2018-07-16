@@ -2,6 +2,10 @@
 
 > Ejercicio de práctica en ReactJs y Firebase
 
+## Video del proyecto en funcionamiento (tag v2.0.0)
+
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/Sv8vzNZxOKM/0.jpg)](http://www.youtube.com/watch?v=Sv8vzNZxOKM)
+
 ## Funcionalidades:
 
 - [x] Comunicación entre usuarios
